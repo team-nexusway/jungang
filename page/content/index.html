@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=0, minimum-scale=1, maximum-scale=5">
+    <title>중앙스테이 콘텐츠</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="https://taejun09.github.io/jungang/assets/image/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="https://taejun09.github.io/jungang/assets/image/favicon.svg" />
+    <link rel="shortcut icon" href="https://taejun09.github.io/jungang/assets/image/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="https://taejun09.github.io/jungang/assets/image/apple-touch-icon.png" />
+
+    <!-- PWA 설정 -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- iOS에서 전체 화면 표시 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="중앙고 스테이 모바일">
+
+    <link href="Jungang-content.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+
+    <h1>ㅤ</h1><br><h2>ㅤ</h2>
+
+<body class="!bg-[#101012] text-white">
+    <div class="max-w-sm mx-auto bg-gray-900 min-h-screen p-4">
+ <!-- 헤더 -->
+ <div class="flex justify-between items-center mb-6">
+    <div class="flex items-center space-x-3">
+        <img src="https://taejun09.github.io/jungang/assets/image/jungang-main_logo.png" alt="중앙중 로고" class="w-10 h-10 rounded-full">
+        <span class="text-[#D9D9D9] text-lg font-semibold tracking-wide">군산중앙고 스테이</span>
+    </div>
+    <div class="flex space-x-4">
+        <!-- 학생이름 표시 -->
+        <span id="welcomeUser" class="bg-[#363740] text-[#BFBFBF] px-4 py-2 rounded-lg">
+            로딩 중...
+        </span>        
+    </div>
+</div>
+<script>
+(function() {
+    try {
+        let loggedInUser = localStorage.getItem("loggedInUser");
+
+        if (!loggedInUser) {
+            window.location.replace("https://taejun09.github.io/jungang/login");
+        } else {
+            // ✅ sessionStorage에도 로그인 정보 복구 (새로고침해도 유지)
+            sessionStorage.setItem("loggedInUser", loggedInUser);
+
+            document.getElementById("welcomeUser").innerText = `${loggedInUser}님`;
+        }
+    } catch (error) {
+        console.error("로그인 확인 중 오류 발생:", error);
+        window.location.replace("https://taejun09.github.io/jungang/login");
+    }
+})();
+
+</script>
+
+
+
+
+
+
+
+<script>
+    // 화면의 너비가 1024px 이상이면 PC로 간주하고 리다이렉트
+    if (window.innerWidth >= 1024) {
+      window.location.href = "https://taejun09.github.io/jungang/pc.html";
+    }
+  </script>
+
+</body>
+</head>
+
+
+<body>
+  <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    </head>
+   
+
+    <style>
+        .container {
+          max-width: 480px;
+          margin: 0 auto;
+        }
+        .card {
+          background: #1e1e22;
+          border-radius: 1rem;
+          padding: 1rem;
+          margin-bottom: 1rem;
+        }
+        input, button {
+          width: 100%;
+          margin-top: 0.5rem;
+          padding: 0.6rem;
+          border: none;
+          border-radius: 0.5rem;
+        }
+        input {
+          background: #2c2c30;
+          color: white;
+        }
+        button {
+          font-weight: bold;
+          color: white;
+          cursor: pointer;
+        }
+        .btn-copy { background: #3B82F6; }
+        .btn-share { background: #10B981; }
+        .btn-connect { background: #2563EB; }
+        .btn-ready { background: #D97706; }
+        .btn-start { background: #22C55E; }
+      
+        .bingo-cell {
+          width: 30vw;
+          height: 30vw;
+          max-width: 100px;
+          max-height: 100px;
+          font-size: 2rem;
+          font-weight: bold;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 2px solid #4b5563;
+          border-radius: 0.5rem;
+          background: #1f2937;
+        }
+        .bingo-cell.selected { background-color: #3B82F6; color: white; }
+        .bingo-cell.enemy { background-color: #EF4444; color: white; }
+        .bingo-cell.completed { background-color: #22C55E !important; }
+        .bingo-cell.disabled { pointer-events: none; opacity: 0.6; }
+      
+        #game-board {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 0.5rem;
+          justify-content: center;
+        }
+      
+        #custom-alert {
+          position: fixed;
+          bottom: 1rem;
+          left: 50%;
+          transform: translateX(-50%);
+          background: #29292e;
+          padding: 0.5rem 1rem;
+          border-radius: 0.5rem;
+          display: none;
+          z-index: 10;
+        }
+      
+        #timer-bar-container {
+          height: 8px;
+          background-color: #333;
+          border-radius: 9999px;
+          overflow: hidden;
+          margin: 1rem 0;
+        }
+      
+        #timer-bar {
+          height: 100%;
+          background-color: #3B82F6;
+          width: 100%;
+          transition: width 1s linear;
+        }
+      
+        @media (max-width: 500px) {
+          .bingo-cell {
+            width: 28vw;
+            height: 28vw;
+            font-size: 1.8rem;
+          }
+        }
+      
+        /* Restart Popup Styling */
+        #restart-popup {
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background: #1e1e22;
+          padding: 1rem;
+          border-radius: 1rem;
+          display: none;
+          z-index: 20;
+        }
+        #restart-popup h3 {
+          color: white;
+          margin-bottom: 1rem;
+        }
+        #restart-popup button {
+          margin-top: 1rem;
+        }
+      </style>
+      </head>
+      <body>
+        <div class="container">
+          <!-- 연결/대기 UI -->
+          <div class="card">
+            <h2><i class="fas fa-gamepad mr-2"></i> 친구랑 OX 빙고</h2>
+            <p><strong>내 ID:</strong> <span id="my-id">-</span></p>
+            <div class="flex gap-2">
+              <button class="btn-copy" onclick="copyId()">ID 복사</button>
+              <button class="btn-share" onclick="shareId()">공유 링크 복사</button>
+            </div>
+            <input id="connect-id" placeholder="상대방 ID 입력" />
+            <button id="connect-btn" class="btn-connect">연결하기</button>
+            <button id="ready-btn" class="btn-ready" style="display: none;">준비하기</button>
+            <button id="start-btn" class="btn-start" style="display: none;">게임 시작</button>
+          </div>
+      
+          <!-- 게임 설정 -->
+          <div class="card">
+            <h3><i class="fas fa-sliders-h mr-2"></i> 게임 설정</h3>
+            <input id="timer-setting" type="number" placeholder="제한시간 (초)" />
+            <input id="round-setting" type="number" placeholder="라운드 수" />
+          </div>
+      
+          <!-- 게임 정보 -->
+          <div id="game-info" class="card" style="display: none;">
+            라운드: <span id="round-num">1</span> / 내 승리: <span id="my-score">0</span> / 상대 승리: <span id="enemy-score">0</span>
+          </div>
+      
+          <!-- 게임판 -->
+          <div id="game-board" style="display: none;"></div>
+      
+          <!-- 제한 시간 바 -->
+          <div id="timer-bar-container" style="display: none;">
+            <div id="timer-bar"></div>
+          </div>
+      
+          <!-- 알림 -->
+          <div id="custom-alert"><span id="custom-alert-message">알림</span></div>
+      
+          <!-- 팝업 -->
+          <div id="restart-popup">
+            <h3>한 판 더 하시겠어요?</h3>
+            <div class="flex gap-2">
+              <button class="btn-start" onclick="restartGame()">네, 다시 시작!</button>
+              <button class="btn-start" onclick="endGame()">아니요, 종료</button>
+            </div>
+          </div>
+        </div>
+      
+        <script>
+          const myIdSpan = document.getElementById("my-id");
+          const connectBtn = document.getElementById("connect-btn");
+          const connectInput = document.getElementById("connect-id");
+          const readyBtn = document.getElementById("ready-btn");
+          const startBtn = document.getElementById("start-btn");
+          const board = document.getElementById("game-board");
+          const alertBox = document.getElementById("custom-alert");
+          const alertMessage = document.getElementById("custom-alert-message");
+          const roundDisplay = document.getElementById("round-num");
+          const myScoreDisplay = document.getElementById("my-score");
+          const enemyScoreDisplay = document.getElementById("enemy-score");
+          const timerBar = document.getElementById("timer-bar");
+          const timerContainer = document.getElementById("timer-bar-container");
+          const restartPopup = document.getElementById("restart-popup");
+      
+          let peer, conn;
+          let isHost = false;
+          let myTurn = false;
+          let myMark = 'O', enemyMark = 'X';
+          let boardState = Array(9).fill(null);
+          let timerDuration = 30;
+          let round = 1, myScore = 0, enemyScore = 0, roundLimit = 3;
+          let timerInterval;
+          let restartVotes = { me: false, enemy: false };
+      
+          function showAlert(msg) {
+            alertMessage.textContent = msg;
+            alertBox.style.display = "block";
+            setTimeout(() => alertBox.style.display = "none", 2000);
+          }
+      
+          function copyId() {
+            navigator.clipboard.writeText(peer.id);
+            showAlert("ID가 복사되었어요!");
+          }
+      
+          function shareId() {
+            const url = `https://taejun09.github.io/jungang/page/content/${peer.id}`;
+            const message = `[중앙스테이 빙고 게임 초대 링크]\n\n친구가 당신을 빙고 게임에 초대했어요!\n👇 아래 링크를 클릭하면 바로 연결됩니다.\n${url}`;
+            navigator.clipboard.writeText(message);
+            showAlert("공유 링크가 복사되었어요!");
+          }
+      
+          function createBoard() {
+            board.innerHTML = "";
+            boardState = Array(9).fill(null);
+            for (let i = 0; i < 9; i++) {
+              const cell = document.createElement("div");
+              cell.className = "bingo-cell";
+              cell.dataset.index = i;
+              cell.addEventListener("click", () => handleClick(i));
+              board.appendChild(cell);
+            }
+          }
+      
+          function handleClick(i) {
+            if (!myTurn || boardState[i]) return;
+            boardState[i] = myMark;
+            updateBoard();
+            send({ type: "move", index: i });
+            endTurn();
+          }
+      
+          function updateBoard() {
+            document.querySelectorAll(".bingo-cell").forEach((cell, i) => {
+              cell.textContent = boardState[i] || "";
+              cell.classList.remove("selected", "enemy", "completed");
+              if (boardState[i] === myMark) cell.classList.add("selected");
+              else if (boardState[i] === enemyMark) cell.classList.add("enemy");
+            });
+            checkWinner();
+          }
+      
+          function checkWinner() {
+            const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+            for (let line of wins) {
+              const [a,b,c] = line;
+              if (boardState[a] && boardState[a] === boardState[b] && boardState[a] === boardState[c]) {
+                line.forEach(i => document.querySelectorAll(".bingo-cell")[i].classList.add("completed"));
+                if (boardState[a] === myMark) {
+                  myScore++;
+                  showAlert("승리!");
+                } else {
+                  enemyScore++;
+                  showAlert("상대방 승리!");
+                }
+                nextRound();
+                return;
+              }
+            }
+            if (!boardState.includes(null)) {
+              showAlert("무승부!");
+              nextRound();
+            }
+          }
+      
+          function nextRound() {
+            clearInterval(timerInterval);
+            round++;
+            if (round > roundLimit) {
+              showAlert("게임 종료!");
+              board.style.display = "none";
+              setTimeout(() => {
+                showRestartPopup();
+              }, 1000);
+              return;
+            }
+            roundDisplay.textContent = round;
+            myScoreDisplay.textContent = myScore;
+            enemyScoreDisplay.textContent = enemyScore;
+            createBoard();
+            startTurn(isHost);
+          }
+      
+          function startTurn(turn) {
+            myTurn = turn;
+            timerContainer.style.display = "block";
+            let time = timerDuration;
+            timerBar.style.width = "100%";
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+              time--;
+              timerBar.style.width = `${(time / timerDuration) * 100}%`;
+              if (time <= 0) {
+                clearInterval(timerInterval);
+                showAlert("시간 초과!");
+                endTurn();
+              }
+            }, 1000);
+          }
+      
+          function endTurn() {
+            myTurn = false;
+            clearInterval(timerInterval);
+            send({ type: "end-turn" });
+          }
+      
+          function send(data) {
+            if (conn?.open) conn.send(data);
+          }
+      
+          function generateId() {
+            const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz0123456789";
+            const rand = () => Array(3).fill(0).map(() => chars[Math.floor(Math.random() * chars.length)]).join("");
+            return `${rand()}-${rand()}-${rand()}`;
+          }
+      
+          function initPeer() {
+            const id = generateId();
+            peer = new Peer(id);
+            peer.on("open", id => myIdSpan.textContent = id);
+            peer.on("connection", connection => {
+              conn = connection;
+              isHost = true;
+              setupConnection();
+              readyBtn.style.display = "block";
+            });
+      
+            // 자동 연결 기능
+            const urlParts = window.location.pathname.split("/");
+            const lastSegment = urlParts[urlParts.length - 1];
+            if (/^[\w\-]+$/.test(lastSegment) && lastSegment.length > 5) {
+              connectInput.value = lastSegment;
+              setTimeout(() => connectBtn.click(), 1000);
+            }
+          }
+      
+          function setupConnection() {
+            conn.on("data", handleData);
+            conn.on("close", () => showAlert("상대방 연결 종료됨"));
+            conn.on("error", () => showAlert("연결 오류 발생"));
+            showAlert("상대방과 연결됨!");
+          }
+      
+          function handleData(data) {
+            if (data.type === "ready") {
+              readyBtn.style.display = "none";
+              if (isHost) startBtn.style.display = "block";
+              showAlert("상대방이 준비 완료");
+            }
+            if (data.type === "start-game") {
+              timerDuration = data.timerDuration;
+              roundLimit = data.roundLimit;
+      
+              startBtn.style.display = "none";
+              document.getElementById("game-info").style.display = "block";
+              board.style.display = "grid";
+              createBoard();
+      
+              roundDisplay.textContent = round;
+              myScoreDisplay.textContent = myScore;
+              enemyScoreDisplay.textContent = enemyScore;
+      
+              startTurn(isHost);
+            }
+            if (data.type === "move") {
+              boardState[data.index] = enemyMark;
+              updateBoard();
+              endTurn();
+            }
+            if (data.type === "end-turn") endTurn();
+            if (data.type === "restart-vote") {
+              restartVotes.enemy = data.vote;
+              checkRestart();
+            }
+            if (data.type === "end-game") {
+              showAlert("상대방이 게임을 종료했어요");
+              restartPopup.style.display = "none";
+            }
+          }
+      
+          function restartGame() {
+            restartVotes.me = true;
+            send({ type: "restart-vote", vote: true });
+            checkRestart();
+          }
+      
+          function endGame() {
+            restartPopup.style.display = "none";
+            send({ type: "end-game" });
+          }
+      
+          function checkRestart() {
+            if (restartVotes.me && restartVotes.enemy) {
+              restartPopup.style.display = "none";
+              round = 1;
+              myScore = 0;
+              enemyScore = 0;
+              roundDisplay.textContent = round;
+              myScoreDisplay.textContent = myScore;
+              enemyScoreDisplay.textContent = enemyScore;
+              createBoard();
+              startTurn(isHost);
+              restartVotes = { me: false, enemy: false };
+            }
+          }
+      
+          function showRestartPopup() {
+            restartVotes = { me: false, enemy: false };
+            restartPopup.style.display = "block";
+          }
+      
+          connectBtn.addEventListener("click", () => {
+            const targetId = connectInput.value.trim();
+            if (!targetId) return showAlert("상대방 ID를 입력해주세요!");
+            conn = peer.connect(targetId);
+            isHost = false;
+      
+            conn.on("open", () => {
+              setupConnection();
+              readyBtn.style.display = "block";
+            });
+      
+            conn.on("error", () => showAlert("연결 오류 발생"));
+          });
+      
+          readyBtn.addEventListener("click", () => {
+            send({ type: "ready" });
+            readyBtn.style.display = "none";
+            showAlert("준비 완료!");
+          });
+      
+          startBtn.addEventListener("click", () => {
+            startBtn.style.display = "none";
+            document.getElementById("game-info").style.display = "block";
+            board.style.display = "grid";
+            createBoard();
+      
+            const timerInput = document.getElementById("timer-setting").value;
+            const roundInput = document.getElementById("round-setting").value;
+            timerDuration = parseInt(timerInput) || 30;
+            roundLimit = parseInt(roundInput) || 3;
+      
+            roundDisplay.textContent = round;
+            myScoreDisplay.textContent = myScore;
+            enemyScoreDisplay.textContent = enemyScore;
+      
+            startTurn(isHost);
+            send({ type: "start-game", timerDuration, roundLimit });
+          });
+      
+          window.onload = initPeer;
+        </script>
+      </body>
+
+
+
+<div class="mobile_popup">
+    <a href="https://taejun09.github.io/jungang/" class="menu_item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="none" viewBox="0 0 25 25"><path fill="#ADB5BD" fill-rule="evenodd" d="M22.195 10.903 13.984 3.69a2 2 0 0 0-2.676.032l-7.79 7.185a2 2 0 0 0-.643 1.47V20.5a2 2 0 0 0 2 2h6v-5a2 2 0 1 1 4 0v5h6a2 2 0 0 0 2-2v-8.094a2 2 0 0 0-.68-1.503" clip-rule="evenodd"></path></svg>
+        <span>홈</span>
+    </a>
+
+    <a href="https://taejun09.github.io/jungang/page/content" class="menu_item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="none" viewBox="0 0 25 25"><g fill="#F0F0F0" fill-rule="evenodd" clip-path="url(#clip0_1636_2717)" clip-rule="evenodd"><path d="M3.625 5.5a2.75 2.75 0 0 1 2.75-2.75h12a2.75 2.75 0 0 1 2.75 2.75v6.55a.75.75 0 0 1-1.5 0V5.5c0-.69-.56-1.25-1.25-1.25h-12c-.69 0-1.25.56-1.25 1.25v14c0 .69.56 1.25 1.25 1.25h7.5a.75.75 0 0 1 0 1.5h-7.5a2.75 2.75 0 0 1-2.75-2.75z"></path><path d="M7.625 7.5a.75.75 0 0 1 .75-.75h8a.75.75 0 0 1 0 1.5h-8a.75.75 0 0 1-.75-.75M20.345 19.669a.75.75 0 0 1 1.06 0l2.5 2.5a.75.75 0 1 1-1.06 1.06l-2.5-2.5a.75.75 0 0 1 0-1.06"></path><path d="M17.875 20.2a3 3 0 1 0 0-6 3 3 0 0 0 0 6m0 1.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9"></path></g><defs><clipPath id="clip0_1636_2717"><path fill="#fff" d="M.375.5h24v24h-24z"></path></clipPath></defs></svg>
+        <span>콘텐츠</span>
+    </a>
+
+    <a href="#" class="menu_item" onclick="openMyPage()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="none" viewBox="0 0 25 25"><path fill="#ADB5BD" fill-rule="evenodd" d="M12.125 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m0 1.5a5 5 0 1 0 0-10 5 5 0 0 0 0 10M12.125 15.25c-4.642 0-8.25 3.326-8.25 7.25a.75.75 0 0 1-1.5 0c0-4.913 4.45-8.75 9.75-8.75s9.75 3.837 9.75 8.75a.75.75 0 0 1-1.5 0c0-3.924-3.608-7.25-8.25-7.25" clip-rule="evenodd"></path></svg>
+        <span>MY</span>
+    </a>
+</div>
+
+
+<!-- 계정 설정 팝업 -->
+<div id="accountPopup" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+    <div class="bg-[#18181c] rounded-2xl shadow-xl p-6 w-[90%] max-w-md text-center space-y-5 relative border border-[#2e2e32]">
+      <!-- 닫기 버튼 -->
+      <button onclick="closeAccountPopup()" class="absolute top-3 right-3 text-gray-400 hover:text-white text-xl">
+        &times;
+      </button>
+  
+      <!-- 헤더 -->
+      <h2 class="text-2xl font-bold text-white">계정 설정</h2>
+  
+      <!-- 프로필 정보 -->
+      <div class="flex flex-col items-center gap-2">
+        <img id="popupImage" src="" alt="프로필 이미지"
+             class="w-20 h-20 rounded-full object-cover border-2 border-gray-600 shadow-sm" />
+        <p class="text-gray-300"><strong>이름:</strong> <span id="popupName" class="font-medium"></span></p>
+        <p class="text-gray-300"><strong>학번:</strong> <span id="popupID" class="font-medium"></span></p>
+        <p class="text-gray-300"><strong>기숙사:</strong> <span id="popupDormitory" class="font-medium"></span></p>
+      </div>
+  
+      <!-- 경고 정보 -->
+      <div id="warningSection" class="bg-[#2b2c30] border-l-4 border-red-500 p-4 shadow-md rounded-xl text-left space-y-3 w-full">
+        <div class="flex items-center gap-2">
+          <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" stroke-width="2"
+               viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M12 9v2m0 4h.01M12 5a7 7 0 00-7 7v1a7 7 0 007 7h1a7 7 0 007-7v-1a7 7 0 00-7-7z" />
+          </svg>
+          <p class="text-red-300 font-semibold">누적 경고: <span id="warningCount">0</span>회</p>
+        </div>
+        
+        <div>
+          <p class="text-sm text-gray-200 font-medium">📌 최근 경고 내역</p>
+          <ul id="recentWarnings" class="list-disc pl-5 text-sm text-gray-400 mt-1 space-y-1">
+            <li>경고 내역 없음</li>
+          </ul>
+        </div>
+      </div>
+  
+      
+      <div class="pt-4 flex justify-center gap-3">
+        <button onclick="logout()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg shadow transition">
+          로그아웃
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+     function closeAccountPopup() {
+    const popup = document.getElementById("accountPopup");
+    if (popup) {
+      popup.classList.add("hidden");
+    }
+  }
+async function openMyPage() {
+  const name = localStorage.getItem("loggedInUser");
+  const id = localStorage.getItem("studentID");
+  const dormitory = localStorage.getItem("dormitory");
+  const image = localStorage.getItem("profileImage");
+
+  if (name && id) {
+    document.getElementById("popupName").innerText = name;
+    document.getElementById("popupID").innerText = id;
+    document.getElementById("popupDormitory").innerText = dormitory;
+    document.getElementById("popupImage").src = image || "https://via.placeholder.com/80";
+    document.getElementById("accountPopup").classList.remove("hidden");
+
+    // 🛑 경고 정보 가져오기
+    try {
+      const response = await fetch("https://script.google.com/macros/s/AKfycbxLPFaImo1Dz8IFxLftbSKf16sEZYySYswZ0r7cjVruxpoMKdqbrBHoqLWuxSUBJo_W/exec");
+      const data = await response.json();
+
+      // userName과 studentID를 문자열로 강제 변환 후 비교
+      const matchingEntry = data.find(entry =>
+        String(entry.userName || "").trim() === name &&
+        String(entry.studentID || "").trim() === id
+      );
+
+      if (matchingEntry && matchingEntry.warningList) {
+        const warnings = matchingEntry.warningList
+          .split("||")
+          .map(w => w.trim())
+          .filter(Boolean); // 빈 항목 제거
+
+        document.getElementById("warningCount").innerText = warnings.length;
+
+        const warningListEl = document.getElementById("recentWarnings");
+        warningListEl.innerHTML = "";
+
+        warnings.slice(-3).reverse().forEach(warning => {
+          const li = document.createElement("li");
+          li.textContent = warning;
+          warningListEl.appendChild(li);
+        });
+      } else {
+        document.getElementById("warningCount").innerText = "0";
+        document.getElementById("recentWarnings").innerHTML = "<li>경고 기록 없음</li>";
+      }
+    } catch (err) {
+      console.error("경고 정보 불러오기 실패:", err);
+      document.getElementById("warningCount").innerText = "N/A";
+      document.getElementById("recentWarnings").innerHTML = "<li>서버 오류</li>";
+    }
+  } else {
+    showCustomAlert("로그인이 필요해요! 홈에서 인증 먼저 해주세요.");
+  }
+}
+  </script>
+
+<script>
+let lastScrollY = window.scrollY; // 마지막 스크롤 위치
+const mobilePopup = document.querySelector(".mobile_popup");
+
+document.addEventListener("scroll", function () {
+    const currentScrollY = window.scrollY;
+
+    // 모바일 화면에서만 동작하도록 설정
+    if (window.innerWidth <= 768) {
+        if (currentScrollY > lastScrollY) {
+            // 아래로 스크롤 시
+            mobilePopup.style.transform = "translateY(100%)"; // 팝업을 아래로 숨김
+        } else {
+            // 위로 스크롤 시
+            mobilePopup.style.transform = "translateY(0)"; // 팝업을 다시 보임
+        }
+        lastScrollY = currentScrollY; // 마지막 스크롤 위치 업데이트
+    }
+});
+</script>
+
+<style>
+    .mobile_popup {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #1e1e22;
+    padding: 10px;
+    border-radius: 10px 10px 0 0;
+    z-index: 9999;
+    border: 1px solid #383840;
+    top: 91%;
+    transform: translateY(100%); /* 초기 상태에서 아래로 숨김 */
+    transition: transform 0.3s ease-in-out; /* 부드러운 전환 */
+}
+
+@media screen and (max-width: 768px) {
+    .page-wrapper {
+      display: none;
+    }
+
+    .mobile_popup {
+      display: flex;
+    }
+
+    .menu_item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      color: #333;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .menu_item svg {
+      width: 26px;
+      height: 26px;
+      margin-bottom: 5px;
+    }
+
+    .menu_item span {
+      font-size: 12px;
+    }
+
+    .menu_item:hover {
+      opacity: 0.8;
+    }
+  }
+
+
+  .menu_item span {
+    font-size: 12px;
+    color: #f0f0f0;
+}
+</style>
+
+
+
+
+ 
+<!-- 푸터 -->
+<footer id="footer" class="bg-[#18181c] py-8 px-4 md:px-12 text-[#D9D9D9] text-sm rounded-lg">
+    <div class="max-w-screen-md mx-auto">
+        <!-- 회사 정보 -->
+        <div class="text-[#A0A0A0] leading-relaxed mb-6">
+            <p class="font-semibold text-[#D9D9D9]">팀 넥서스웨이</p>
+            <p>대표: 김태준</p>
+            <p>주소: 전북특별자치도 군산시 성산면 군장대길 13</p>
+            <p class="mt-2">© 2025. Team NexusWay.</p>
+        </div>
+
+        <!-- 개인정보 보호 -->
+        <div class="mb-6">
+            <p class="font-semibold text-[#D9D9D9] flex items-center">
+                <a href="https://team-nexusway.notion.site/1c54e0b44e5f801d827ecd375356fe87#1c54e0b44e5f804394bfde69324a9b2b" class="text-[#D9D9D9] hover:text-blue-500">개인정보 보호중</a> <i class="fas fa-check-circle text-blue-500 ml-1"></i>
+            </p>
+            <p class="text-[#A0A0A0]">넥서스웨이는 고객님의 개인정보 보호를 위해 최선의 노력을 다하고 있습니다.</p>
+        </div>
+
+        <!-- 약관 -->
+        <div class="flex space-x-6 text-[#A0A0A0]">
+            <a href="https://team-nexusway.notion.site/1c54e0b44e5f8067b7adefd8cd26f647" class="hover:text-white transition">서비스 이용 약관</a>
+            <a href="https://team-nexusway.notion.site/1c54e0b44e5f801d827ecd375356fe87#1c54e0b44e5f804394bfde69324a9b2b" class="hover:text-white transition">개인정보 처리방침</a>
+            <a href="https://team-nexusway.notion.site/1c54e0b44e5f8063a008d4823fd7d425" class="hover:text-white transition">제안하기</a>
+        </div>
+    </div>
+</footer>
+
+    <script>
+        // 서비스 워커 등록
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service-worker.js').then(registration => {
+                console.log('✅ Service Worker 등록 성공:', registration.scope);
+
+                // 업데이트가 있을 때 처리
+                registration.onupdatefound = () => {
+                    const newWorker = registration.installing;
+                    console.log('🚀 새 서비스 워커 감지됨!');
+
+                    // 새 워커 상태가 'installed'일 때
+                    newWorker.onstatechange = () => {
+                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            console.log('🔄 새로운 업데이트가 있습니다!');
+
+                            // 📢 사용자에게 알림 표시
+                            alert('새로운 업데이트가 있습니다! 페이지를 새로 고침하세요.');
+
+                            // 새로운 서비스 워커 즉시 활성화
+                            newWorker.postMessage({ type: 'skipWaiting' });
+
+                            // 페이지 자동 새로 고침
+                            window.location.reload();
+                        }
+                    };
+                };
+            }).catch(error => {
+                console.log('❌ Service Worker 등록 실패:', error);
+            });
+
+            // 서비스 워커 컨트롤러가 변경될 때 페이지 새로고침
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                console.log('🔄 서비스 워커가 새로 고침됨!');
+                window.location.reload();
+            });
+        }
+    </script>
+
+
+
+<script>
+  let idleTimer;
+  let isUserActive = true;
+
+  // 강력 새로 고침 함수 (캐시 무시)
+  function forceReload() {
+    console.log("10초간 활동 없음 → 강력 새로고침");
+    location.reload(true); // true는 캐시 무시 (단, 일부 브라우저는 무시함)
+    // 보장하려면 아래처럼 query 파라미터로 우회하는 방법도 있음
+    // location.href = location.pathname + '?reload=' + new Date().getTime();
+  }
+
+  // 사용자 활동 감지 함수
+  function resetIdleTimer() {
+    if (!isUserActive) {
+      console.log("사용자 활동 감지됨. 타이머 초기화");
+    }
+    isUserActive = true;
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => {
+      isUserActive = false;
+
+      // 현재 창이 **열려 있고**, 사용자 입력이 없었다면 새로고침
+      if (document.visibilityState === 'visible') {
+        forceReload();
+      }
+    }, 10000); // 10초
+  }
+
+  // 사용자 활동 이벤트 바인딩
+  ['mousemove', 'scroll', 'keydown', 'click', 'touchstart'].forEach(event => {
+    window.addEventListener(event, resetIdleTimer, { passive: true });
+  });
+
+  // 페이지가 처음 로드될 때 타이머 시작
+  resetIdleTimer();
+
+  // 탭이 백그라운드로 전환되었다가 돌아올 때 다시 체크
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === 'visible') {
+      resetIdleTimer();
+    }
+  });
+</script>
+
+
+
+</div>
+</body>
+</html>
+

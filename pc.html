@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+    <title>지금바로 중앙스테이를 경험해보세요!</title>
+    <link rel="icon" type="image/png" href="https://taejun09.github.io/jungang/assets/image/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="https://taejun09.github.io/jungang/assets/image/favicon.svg" />
+<link rel="shortcut icon" href="https://taejun09.github.io/jungang/assets/image/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="https://taejun09.github.io/jungang/assets/image/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-title" content="군산중앙고 기숙사" />
+<link rel="manifest" href="https://taejun09.github.io/jungang/assets/image/site.webmanifest" />
+ <link href="Jungang-pc.css" rel="stylesheet" type="text/css"/>
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    </head>
+       
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // 화면 너비가 768px 이하인 경우 모바일로 간주
+            if (window.innerWidth <= 768) {
+                // 모바일일 때 리다이렉트할 URL
+                window.location.href = "https://taejun09.github.io/jungang/";
+            }
+        });
+    </script>
+    
+
+        <div class="section jungang">
+            <div class="container jungang _80px-padding">
+                <div class="title-wrap jungang">
+                    <h1 class="h1-title white centered">Jungang Stay</h1> <br>
+                    <p class="extra-large-text center white">중앙스테이는 여러분의 새로운 시작을 응원합니다. <br> 학업에 집중할수 있는 공간, 지금 바로 만나보세요.</p>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // KST 시간
+            function updateKSTTime() {
+                const options = { timeZone: 'Asia/Seoul', hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' };
+                const kstTime = new Date().toLocaleTimeString('en-US', options); // KST 시간 가져오기
+                document.getElementById('kst-time').textContent = `현재 시간: ${kstTime} KST`; // p 태그에 시간 표시
+            }
+            
+            window.onload = function() {
+                updateKSTTime(); 
+                setInterval(updateKSTTime, 1000); 
+            };
+        </script>
+        
+
+
+        <div id="Overview" class="section jungang">
+            <div class="container">
+                <div class="content-grid">
+                    <div id="jungang-banner" class="text-column _500px-max-width _40px-padding">
+                        <p id="kst-time" class="small-text large-text"></p>
+                        <h2 class="h2-title" id="changing-text">기숙사생이라면 <br> 더 편리하게!</h2>
+
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function () {
+                                const textElement = document.getElementById("changing-text");
+                                const messages = [
+                                    "기숙사생이라면 <br> 더 편리하게!",
+                                    "기숙사생이라면 <br> 더욱 간편하게!",
+                                    "기숙사생이라면 <br> 꼭 필요한 서비스!"
+                                ];
+                                let index = 0;
+                        
+                                setInterval(() => {
+                                    index = (index + 1) % messages.length;
+                                    textElement.innerHTML = messages[index];
+                                }, 3000);
+                            });
+                        </script>
+                        
+                        <p class="large-text _30px-margin">스마트폰으로 QR 코드를 스캔하고, 기숙사 어플을 이용해보세요!</p>
+                        <div class="svg-grid">
+                            <p class="text">
+                                <i class="fa-solid fa-house" style="color: #000000;"></i> <strong class="bold-span">스테이 관리</strong>
+                                <br> 고장 신고, 식단 정보, 공지사항을 한 곳에서 이용할 수 있어요!
+                            </p>
+                        </div>
+                        <div class="svg-grid">
+                            <p class="text">
+                                <i class="fa-solid fa-lock" style="color: #000000;"></i> <strong class="bold-span">출입 관리</strong>
+                                <br> 조기 퇴사, 외출, 외박, 모바일 학생증을 간편하게 이용해 보세요!
+                            </p>
+                        </div>
+                        <div class="svg-grid no-margin">
+                            <p class="text">
+                                <i class="fa-solid fa-graduation-cap" style="color: #000000;"></i> <strong class="bold-span">학습 공간</strong>
+                                <br> 열람실 이동 시, 간편하게 제출할 수 있어요!
+                            </p>
+                        </div>
+                        <div class="svg-grid">
+                            <p class="text">
+                                <i class="fa-solid fa-gamepad" style="color: #000000;"></i> <strong class="bold-span">미니게임</strong>
+                                <br> 친구들과 소소한 미니게임을 즐길수 있어요!
+                            </p>
+                        </div>
+                    </div>
+                    <div id="jungang-banner-img" class="image-wrap jungang">
+                        <img src="https://taejun09.github.io/jungang/assets/image/jungang-stay.png" loading="lazy"  alt=""/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section jungang">
+            <div class="container jungang _80px-padding">
+                <div class="title-wrap jungang">
+                    <h1 class="h1-title white centered">Jungang Stay</h1> <br>
+                    <p class="extra-large-text center white" id="text-change">중앙스테이는 군산중앙고등학교와 스테이를 결합한 이름입니다!</p>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+
+            const texts = [
+              "중앙스테이는 군산중앙고등학교와 스테이를 결합한 이름입니다!",
+              "도전! 창조! 혁신! 군산중앙고등학교입니다.",
+              "성실히 배우자, 사명을 자각하자, 가치를 창조하자",
+            ];
+          
+            let index = 0;
+            const textElement = document.getElementById('text-change');
+          
+
+            function changeText() {
+              textElement.classList.remove('fade-in');
+              textElement.classList.add('fade-out');    
+          
+
+              setTimeout(() => {
+                index = (index + 1) % texts.length;  
+                textElement.textContent = texts[index];
+                textElement.classList.remove('fade-out');
+                textElement.classList.add('fade-in'); 
+              }, 1500); 
+            }
+          
+
+            textElement.classList.add('fade-in');
+          
+    
+            setInterval(changeText, 5000);
+          </script>
+          
+          <script>
+            let idleTimer;
+            let isUserActive = true;
+          
+            // 강력 새로 고침 함수 (캐시 무시)
+            function forceReload() {
+              console.log("10초간 활동 없음 → 강력 새로고침");
+              location.reload(true); // true는 캐시 무시 (단, 일부 브라우저는 무시함)
+              // 보장하려면 아래처럼 query 파라미터로 우회하는 방법도 있음
+              // location.href = location.pathname + '?reload=' + new Date().getTime();
+            }
+          
+            // 사용자 활동 감지 함수
+            function resetIdleTimer() {
+              if (!isUserActive) {
+                console.log("사용자 활동 감지됨. 타이머 초기화");
+              }
+              isUserActive = true;
+              clearTimeout(idleTimer);
+              idleTimer = setTimeout(() => {
+                isUserActive = false;
+          
+                // 현재 창이 **열려 있고**, 사용자 입력이 없었다면 새로고침
+                if (document.visibilityState === 'visible') {
+                  forceReload();
+                }
+              }, 10000); // 10초
+            }
+          
+            // 사용자 활동 이벤트 바인딩
+            ['mousemove', 'scroll', 'keydown', 'click', 'touchstart'].forEach(event => {
+              window.addEventListener(event, resetIdleTimer, { passive: true });
+            });
+          
+            // 페이지가 처음 로드될 때 타이머 시작
+            resetIdleTimer();
+          
+            // 탭이 백그라운드로 전환되었다가 돌아올 때 다시 체크
+            document.addEventListener("visibilitychange", () => {
+              if (document.visibilityState === 'visible') {
+                resetIdleTimer();
+              }
+            });
+          </script>
+        
+
+                <div class="footer">
+                    <div class="footer-credits">              
+        Copyright © 2025. Team NexusWay. All Rights Reserved.</a>| Powered by <a href="https://school.jbedu.kr/gs-jungang" target="_blank" class="footer-link-span">JUNGANG High School</a>
+                    </div>
+    </body>
+</html>

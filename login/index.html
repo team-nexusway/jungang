@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=0, minimum-scale=1, maximum-scale=5">
+    <title>중앙스테이 로그인</title>
+    <link rel="icon" type="image/png" href="https://taejun09.github.io/jungang/assets/image/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="https://taejun09.github.io/jungang/assets/image/favicon.svg" />
+<link rel="shortcut icon" href="https://taejun09.github.io/jungang/assets/image/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="https://taejun09.github.io/jungang/assets/image/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-title" content="군산중앙고 기숙사" />
+<link rel="manifest" href="https://taejun09.github.io/jungang/assets/image/site.webmanifest" />
+<link href="jungang-login.css" rel="stylesheet" type="text/css"/>
+</head>
+
+<head>
+    <!-- PWA 설정 -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- iOS에서 전체 화면 표시 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="중앙고 기숙사 모바일">
+    
+    <!-- iOS 홈 화면 아이콘 -->
+    <link rel="apple-touch-icon" href="https://taejun09.github.io/jungang/assets/image/apple-touch-icon.png">
+</head>
+
+<body>
+<!-- 로그인창 -->
+<img class="logo" src="https://ifh.cc/g/ttkYGN.png" alt="학교 로고">
+<div class="container" id="authContainer">
+    <h2>인증하기</h2>
+    <p>이름과 선생님께 발급받은 6자리 접속 비밀번호를 입력해주세요.</p>
+
+    <!-- 기숙사 선택 드롭다운 -->
+    <select id="dormitory">
+        <option value="">기숙사 선택</option>
+        <option value="창조관">창조관</option>
+        <option value="창지관">창지관</option>
+    </select>
+    
+
+    <input type="text" id="name" placeholder="이름 입력" maxlength="20">
+    <input type="text" id="dob" placeholder="접속 비밀번호 입력" maxlength="6">
+
+    <button onclick="verifyDOB()">접속하기</button>
+</div>
+
+<!-- 오류 팝업창 -->
+<div id="customAlert" class="custom-alert">
+    <div class="custom-alert-content">
+        <p id="alertMessage"></p>
+        <button onclick="closeCustomAlert()">확인</button>
+    </div>
+</div>
+</body>
+
+<style>
+    select {
+    width: 98%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    text-align: center;
+    font-family: 'Noto Sans KR';
+    background: #555;
+    color: #ffffff;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    cursor: pointer;
+}
+
+select:focus {
+    outline: 2px dashed #000000;
+}
+
+</style>
+
+<script>
+    async function verifyDOB() {
+    const inputDOB = document.getElementById("dob").value.trim();
+    const inputName = document.getElementById("name").value.trim();
+    const selectedDorm = document.getElementById("dormitory").value;
+
+    if (!selectedDorm) {
+        showCustomAlert("기숙사를 선택해주세요.");
+        return;
+    }
+
+    try {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbxLPFaImo1Dz8IFxLftbSKf16sEZYySYswZ0r7cjVruxpoMKdqbrBHoqLWuxSUBJo_W/exec");
+        const validPasswords = await response.json();
+
+        const validData = validPasswords
+            .map(entry => {
+                const authCode = entry.authCode ? String(entry.authCode).trim() : null;
+                const userName = entry.userName ? String(entry.userName).trim() : null;
+                const studentID = entry.studentID ? String(entry.studentID).trim() : null;
+                const profileImage = entry.profileImage ? String(entry.profileImage).trim() : null;
+
+                return authCode && userName ? { code: authCode, name: userName, id: studentID, image: profileImage } : null;
+            })
+            .filter(entry => entry !== null);
+
+        const matchedEntry = validData.find(entry => entry.code === inputDOB && entry.name === inputName);
+
+        if (matchedEntry) {
+            // 로그인 정보 저장
+            localStorage.setItem("loggedInUser", matchedEntry.name);
+            localStorage.setItem("studentID", matchedEntry.id);
+            localStorage.setItem("profileImage", matchedEntry.image);
+            localStorage.setItem("dormitory", selectedDorm);
+
+            sessionStorage.setItem("loggedInUser", matchedEntry.name);
+            sessionStorage.setItem("studentID", matchedEntry.id);
+            sessionStorage.setItem("profileImage", matchedEntry.image);
+            sessionStorage.setItem("dormitory", selectedDorm);
+
+            // 기숙사에 따라 리다이렉트할 URL 결정
+            let redirectURL = "";
+            switch (selectedDorm) {
+                case "창조관":
+                    redirectURL = "https://taejun09.github.io/jungang/";
+                    break;
+                case "창지관":
+                    redirectURL = "https://taejun09.github.io/jungang/page/01/";
+                    break;
+            }
+            window.location.href = redirectURL;
+        } else {
+            showCustomAlert("입력하신 인증코드나 이름이 틀린 것 같아요! <br> 다시 한 번 확인해 주세요.");
+        }
+    } catch (error) {
+        console.error("인증서버 API 오류:", error);
+        showCustomAlert("서버 오류! 다시 시도해주세요.");
+    }
+}
+
+// 커스텀 팝업 함수
+function showCustomAlert(message) {
+    document.getElementById("alertMessage").innerHTML = message;
+    document.getElementById("customAlert").style.display = "flex";
+}
+
+function closeCustomAlert() {
+    document.getElementById("customAlert").style.display = "none";
+}
+</script>
+
+<script>
+    let idleTimer;
+    let isUserActive = true;
+  
+    // 강력 새로 고침 함수 (캐시 무시)
+    function forceReload() {
+      console.log("10초간 활동 없음 → 강력 새로고침");
+      location.reload(true); // true는 캐시 무시 (단, 일부 브라우저는 무시함)
+      // 보장하려면 아래처럼 query 파라미터로 우회하는 방법도 있음
+      // location.href = location.pathname + '?reload=' + new Date().getTime();
+    }
+  
+    // 사용자 활동 감지 함수
+    function resetIdleTimer() {
+      if (!isUserActive) {
+        console.log("사용자 활동 감지됨. 타이머 초기화");
+      }
+      isUserActive = true;
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(() => {
+        isUserActive = false;
+  
+        // 현재 창이 **열려 있고**, 사용자 입력이 없었다면 새로고침
+        if (document.visibilityState === 'visible') {
+          forceReload();
+        }
+      }, 10000); // 10초
+    }
+  
+    // 사용자 활동 이벤트 바인딩
+    ['mousemove', 'scroll', 'keydown', 'click', 'touchstart'].forEach(event => {
+      window.addEventListener(event, resetIdleTimer, { passive: true });
+    });
+  
+    // 페이지가 처음 로드될 때 타이머 시작
+    resetIdleTimer();
+  
+    // 탭이 백그라운드로 전환되었다가 돌아올 때 다시 체크
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === 'visible') {
+        resetIdleTimer();
+      }
+    });
+  </script>
+</html>
