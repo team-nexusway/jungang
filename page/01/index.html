@@ -11,6 +11,15 @@
     <link rel="icon" type="image/svg+xml" href="https://team-nexusway.github.io/jungang/assets/image/favicon.svg" />
     <link rel="shortcut icon" href="https://team-nexusway.github.io/jungang/assets/image/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="https://team-nexusway.github.io/jungang/assets/image/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link href="https://cdn.jsdelivr.net/gh/toss/tossface/dist/tossface.css" rel="stylesheet" type="text/css" />
+    <style>
+        .tossface {
+          font-family: Tossface;
+          font-size: 0.9rem;
+        }
+      </style>
 
     <!-- PWA 설정 -->
     <link rel="manifest" href="manifest.json">
@@ -28,7 +37,10 @@
 
 <body class="!bg-[#101012] text-white">
     <div class="max-w-sm mx-auto bg-gray-900 min-h-screen p-4">
- <!-- 헤더 -->
+ 
+
+
+<!-- 헤더 -->
  <div class="flex justify-between items-center mb-6">
     <div class="flex items-center space-x-3">
         <img src="https://team-nexusway.github.io/jungang/assets/image/jungang-main_logo.png" alt="중앙중 로고" class="w-10 h-10 rounded-full">
@@ -41,6 +53,529 @@
         </span>        
     </div>
 </div>
+
+    
+<!-- 이동 사유 입력 팝업 -->
+<div id="reason-popup" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden z-50">
+    <div class="bg-[#1e1e22] p-5 rounded-2xl w-[340px] shadow-lg relative" id="reason-popup-content">
+        <button id="close-reason-popup" class="absolute top-5 right-6 text-[#bfbfbf] hover:text-white transition">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <h2 class="text-xl font-bold mb-4 text-[#D9D9D9] flex items-center">
+            <i class="fas fa-door-open mr-2"></i> 열람실 이동 사유
+        </h2>
+
+        <!-- 카테고리 선택 -->
+        <select id="reason-category" class="w-full p-2 bg-[#29292e] text-[#D9D9D9] rounded-md mb-3">
+            <option value="">카테고리를 선택하세요</option>
+            <option value="휴식">휴식</option>
+            <option value="기타">기타</option>
+        </select>
+
+        <!-- 기타 선택 시 내용 입력 -->
+        <textarea id="reason-text" class="w-full p-2 bg-[#29292e] text-[#D9D9D9] rounded-md hidden" rows="4" placeholder="이동 사유를 입력하세요"></textarea>
+
+        <button id="submit-reason" class="mt-3 bg-[#363740] text-white px-4 py-2 rounded-lg w-full hover:bg-[#2f3033] transition">
+            제출하기
+        </button>
+    </div>
+</div>
+
+<!-- 알림 메시지 -->
+<div id="custom-alert" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-[#29292e] text-white py-2 px-4 rounded-lg shadow-lg hidden flex items-center whitespace-nowrap overflow-hidden text-ellipsis">
+    <i class="fa-regular fa-circle-check mr-2"></i>
+    <span id="custom-alert-message">이동 사유를 사감선생님께 전달했어요!</span>
+</div>
+
+</body>
+</head>
+
+
+<body>
+
+<!-- 상단헤더 -->
+<a href="https://team-nexusway.notion.site/1c54e0b44e5f8056a424c0f6b5a827c3" class="bg-gradient-to-r from-[#1a1a1a] via-[#18181c] to-[#2e2e2e] p-4 rounded-lg mb-4 mt-4 block">
+    <div class="flex items-center justify-between">
+        <i class="fas fa-gift text-white ml-2"></i>
+        <span class="header-text text-white">신규 이용자라면? 확인해보세요!</span>
+        <i class="fas fa-arrow-right text-white mr-2"></i>
+    </div>
+</a>
+
+
+<!-- 탐색하기 -->
+<div class="bg-[#18181c] p-4 rounded-lg mb-4">
+    <h2 class="text-lg font-semibold mb-3 flex items-center text-[#D9D9D9]">
+        <i class="fas fa-compass mr-2"></i>
+        탐색하기
+    </h2>
+    <div class="grid-container">
+        <a href="#" class="grid-item" id="report-btn" data-key="report">
+            <span class="bottom-text">고장신고 · <span class="last-click" id="last-click-report">-</span></span>
+        </a>
+        <a href="#" class="grid-item large" id="reading-room-btn" data-key="reading-room">
+            <span class="bottom-text">열람실 · <span class="last-click" id="last-click-reading-room">-</span></span>
+        </a>
+        <a href="#" class="grid-item" id="meal-info-btn" data-key="meal-info">
+            <span class="bottom-text">식단정보 · <span class="last-click" id="last-click-meal-info">-</span></span>
+        </a>        
+    </div>
+</div>
+
+
+
+<!-- 모바일 학생증 -->
+<div class="bg-[#18181c] p-4 rounded-lg mb-4">
+    <h2 class="text-lg font-semibold mb-3 flex items-center text-[#D9D9D9]">
+        <i class="fas fa-id-card mr-2"></i> 모바일 학생증
+    </h2>
+    
+    <!-- 학생증 카드 (앞면/뒷면) -->
+    <div class="relative w-80 h-48 perspective-1000 mx-auto" onclick="flipCard()">
+        <div id="studentCard" class="w-full h-full transition-transform duration-500 ease-in-out transform-style-preserve-3d">
+            
+            <!-- 앞면 -->
+            <div class="absolute w-full h-full bg-[#1e1e22] rounded-xl shadow-lg flex items-center px-5 py-3 backface-hidden border border-[#33323A]">
+                <img id="schoolLogo" src="https://team-nexusway.github.io/jungang/assets/image/jungang-main_logo.png" 
+                     alt="학교 로고" class="w-14 h-14 rounded-full border-2 border-[#33323A] shadow-md">
+                <div class="ml-4 text-left text-[#D9D9D9]">
+                    <p id="studentName" class="text-lg font-semibold">이름</p>
+                    <p id="studentID" class="text-sm text-[#A0A0A0]">학번: </p>
+                    <p class="text-xs mt-1 text-[#7C7C7C]">중앙고등학교</p>
+                </div>
+                <div class="ml-auto">
+                    <img id="studentPhoto" src="https://ifh.cc/g/7qFrDt.png" 
+                         alt="학생 사진" class="w-16 h-16 rounded-lg border-2 border-[#33323A] shadow-md">
+                </div>
+            </div>
+
+            <!-- 뒷면 -->
+            <div class="absolute w-full h-full bg-[#1e1e22] rounded-xl shadow-lg flex flex-col items-center justify-center rotate-y-180 backface-hidden border border-[#33323A]">
+                <p class="text-[#D9D9D9] text-sm font-semibold">발급 기관: 중앙고등학교</p>
+                <p class="text-[#A0A0A0] text-xs">유효기간: 2025년 12월 31일</p>
+                <div class="bg-[#18181c] p-2 rounded-lg mt-3 border border-[#33323A]">
+                    <img id="qrCode" src="" alt="QR 코드" class="w-20 h-20">
+                </div>
+                <p class="text-[#7C7C7C] text-xs mt-2">이 학생증은 본인 확인용입니다.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- 식단 팝업 -->
+<div id="meal-popup" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden">
+    <div class="bg-[#1e1e22] p-5 rounded-2xl w-[340px] shadow-lg relative" id="meal-popup-content">
+        <!-- 닫기(X) 버튼 -->
+        <button id="close-meal-popup" class="absolute top-5 right-6 text-[#bfbfbf] hover:text-white transition">
+           <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <h2 class="text-xl font-bold mb-4 text-[#D9D9D9] flex items-center">
+            <i class="fas fa-utensils mr-2"></i> 오늘의 식단
+        </h2>
+        <div id="meal-content" class="text-[#BFBFBF] space-y-3">
+            <div class="meal-section">
+                <h3 class="meal-title"><i class="fas fa-sun"></i> 조식</h3>
+                <p id="breakfast" class="meal-text">불러오는 중...</p>
+            </div>
+            <div class="meal-section">
+                <h3 class="meal-title"><i class="fas fa-cloud-sun"></i> 중식</h3>
+                <p id="lunch" class="meal-text">불러오는 중...</p>
+            </div>
+            <div class="meal-section">
+                <h3 class="meal-title"><i class="fas fa-moon"></i> 석식</h3>
+                <p id="dinner" class="meal-text">불러오는 중...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- 고장 신고 팝업 -->
+<div id="report-popup" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden">
+    <div class="bg-[#1e1e22] p-5 rounded-2xl w-[340px] shadow-lg relative" id="report-popup-content">
+        <button id="close-report-popup" class="absolute top-5 right-6 text-[#bfbfbf] hover:text-white transition">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <h2 class="text-xl font-bold mb-4 text-[#D9D9D9] flex items-center">
+            <i class="fas fa-exclamation-triangle mr-2"></i> 고장 신고
+        </h2>
+        
+        <!-- 카테고리 선택 -->
+        <select id="report-category" class="w-full p-2 bg-[#29292e] text-[#D9D9D9] rounded-md mb-3">
+            <option value="">카테고리를 선택하세요</option>
+            <option value="화장실">화장실</option>
+            <option value="전기">전기</option>
+            <option value="에어컨/난방">에어컨/난방</option>
+            <option value="기타">기타</option>
+        </select>
+
+        <!-- 호실 입력 -->
+        <input id="report-room" type="text" class="w-full p-2 bg-[#29292e] text-[#D9D9D9] rounded-md mb-3 hidden" placeholder="호실을 입력하세요 (예: 212호)">
+
+        <!-- 기타 선택 시 내용 입력 -->
+        <textarea id="report-text" class="w-full p-2 bg-[#29292e] text-[#D9D9D9] rounded-md hidden" rows="4" placeholder="고장 내용을 입력하세요"></textarea>
+
+        <button id="submit-report" class="mt-3 bg-[#363740] text-white px-4 py-2 rounded-lg w-full hover:bg-[#2f3033] transition">신고하기</button>
+    </div>
+</div>
+
+<!-- 자체 팝업 메시지 -->
+<div id="custom-alert" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-[#29292e] text-white py-2 px-4 rounded-lg shadow-lg hidden flex items-center whitespace-nowrap overflow-hidden text-ellipsis">
+    <i class="fa-regular fa-circle-check mr-2"></i>
+    <span id="custom-alert-message">신고가 접수되었습니다.</span>
+</div>
+
+
+
+
+<!-- 공지사항 -->
+<div class="bg-[#18181c] p-4 rounded-lg mb-4">
+    <h2 class="text-lg font-semibold mb-4 flex items-center text-[#D9D9D9]">
+        <i class="fas fa-newspaper mr-2"></i> 공지사항
+    </h2>
+    <ul id="notice-list" class="space-y-2">
+        <li class="bg-[#1e1e22] p-3 rounded-lg flex justify-between items-center hover:bg-[#33323A] transition-all">
+            <a href="#" class="flex justify-between w-full items-center">
+                <span class="text-[#d4d4d8] text-sm font-medium">[공지사항] 군산중앙고등학교</span>
+                <span class="text-[#A0A0A0] text-xs">2025.03.04</span>
+            </a>
+        </li>
+        <li class="bg-[#1e1e22] p-3 rounded-lg flex justify-between items-center hover:bg-[#33323A] transition-all">
+            <a href="#" class="flex justify-between w-full items-center">
+                <span class="text-[#d4d4d8] text-sm font-medium">[공지사항] 신입생 안내사항</span>
+                <span class="text-[#A0A0A0] text-xs">2025.03.04</span>
+            </a>
+        </li>
+        <li class="bg-[#1e1e22] p-3 rounded-lg flex justify-between items-center hover:bg-[#33323A] transition-all">
+            <a href="#" class="flex justify-between w-full items-center">
+                <span class="text-[#d4d4d8] text-sm font-medium">[공지사항] 신입생 주의사항</span>
+                <span class="text-[#A0A0A0] text-xs">2025.03.04</span>
+            </a>
+        </li>
+    </ul>
+</div>
+
+<!-- 자체 팝업 메시지 -->
+<div id="custom-alert" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-[#29292e] text-white py-2 px-4 rounded-lg shadow-lg hidden flex items-center whitespace-nowrap overflow-hidden text-ellipsis">
+    <i class="fa-regular fa-circle-check mr-2"></i>
+    <span id="custom-alert-message">신청이 성공적으로 접수되었습니다.</span>
+</div>
+
+<!-- 출입관리 -->
+<div class="bg-[#18181c] p-4 rounded-lg mb-4">
+    <h2 class="text-lg font-semibold mb-3 flex items-center text-[#D9D9D9]">
+        <i class="fas fa-lock mr-2 text-gray-400"></i> 출입관리
+    </h2>
+    
+    <!-- 신청 목록 -->
+    <div class="space-y-2">
+        <div class="bg-[#1e1e22] p-3 rounded-lg flex justify-between items-center">
+            <span class="text-[#d4d4d8]">외출 신청</span>
+            <button class="bg-[#363740] hover:bg-[#4a4b50] text-[#BFBFBF] px-4 py-2 rounded-lg transition-all">
+                신청하기
+            </button>
+        </div>
+        
+        <div class="bg-[#1e1e22] p-3 rounded-lg flex justify-between items-center">
+            <span class="text-[#d4d4d8]">외박 신청</span>
+            <button class="bg-[#363740] hover:bg-[#4a4b50] text-[#BFBFBF] px-4 py-2 rounded-lg transition-all">
+                신청하기
+            </button>
+        </div>
+        
+        <div class="bg-[#1e1e22] p-3 rounded-lg flex justify-between items-center">
+            <span class="text-[#d4d4d8]">조기퇴소 신청</span>
+            <button class="bg-[#363740] hover:bg-[#4a4b50] text-[#BFBFBF] px-4 py-2 rounded-lg transition-all">
+                신청하기
+            </button>
+        </div>
+
+        
+    </div>
+</div>
+
+<!-- 출입 신청 팝업 -->
+<div id="popup" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden" onclick="closePopup(event)">
+    <div class="bg-[#1e1e22] p-6 rounded-lg w-80 relative" onclick="event.stopPropagation();">
+        <!-- 닫기(X) 버튼 -->
+        <button id="closePopup" class="absolute top-6 right-3 text-[#bfbfbf] hover:text-white transition">
+           <i class="fa-solid fa-xmark"></i>
+        </button>
+        <h2 id="popupTitle" class="text-lg font-semibold mb-4 text-[#D9D9D9] text-center">출입 신청</h2>
+        
+        <!-- 날짜 및 제출 시간 -->
+        <div class="mb-3">
+            <label class="text-sm text-[#BFBFBF]">오늘 날짜</label>
+            <input id="date" type="text" class="w-full bg-[#2a2a2e] p-2 rounded text-[#D9D9D9]" readonly>
+        </div>
+
+        <div class="mb-3">
+            <label class="text-sm text-[#BFBFBF]">제출 시간</label>
+            <input id="time" type="text" class="w-full bg-[#2a2a2e] p-2 rounded text-[#D9D9D9]" readonly>
+        </div>
+
+        <!-- 담당 선생님 -->
+        <div class="mb-3">
+            <label class="text-sm text-[#BFBFBF]">금일 사감 선생님</label>
+            <input id="teacher" type="text" class="w-full bg-[#2a2a2e] p-2 rounded text-[#D9D9D9]" readonly>
+        </div>
+
+        <!-- 제출 사유 입력 -->
+        <div class="mb-4">
+            <label class="text-sm text-[#BFBFBF]">제출 사유</label>
+            <textarea id="reason" class="w-full bg-[#2a2a2e] p-2 rounded text-[#D9D9D9] rows="3" placeholder="사유를 작성해주세요. 예) 개인사유"></textarea>
+        </div>
+
+        <!-- 버튼 -->
+        <div class="flex justify-center">
+            <button id="submitRequest" class="bg-[#4a4b50] px-4 py-2 rounded text-white">제출하기</button>
+        </div>
+    </div>
+</div>
+
+<!-- 하단바 -->
+<div class="mobile_popup">
+    <a href="https://team-nexusway.github.io/jungang/" class="menu_item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="none" viewBox="0 0 25 25"><path fill="#F0F0F0" fill-rule="evenodd" d="M22.195 10.903 13.984 3.69a2 2 0 0 0-2.676.032l-7.79 7.185a2 2 0 0 0-.643 1.47V20.5a2 2 0 0 0 2 2h6v-5a2 2 0 1 1 4 0v5h6a2 2 0 0 0 2-2v-8.094a2 2 0 0 0-.68-1.503" clip-rule="evenodd"></path></svg>
+        <span>홈</span>
+    </a>
+
+    <a href="#" class="menu_item" onclick="openMyPage()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="none" viewBox="0 0 25 25"><path fill="#ADB5BD" fill-rule="evenodd" d="M12.125 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m0 1.5a5 5 0 1 0 0-10 5 5 0 0 0 0 10M12.125 15.25c-4.642 0-8.25 3.326-8.25 7.25a.75.75 0 0 1-1.5 0c0-4.913 4.45-8.75 9.75-8.75s9.75 3.837 9.75 8.75a.75.75 0 0 1-1.5 0c0-3.924-3.608-7.25-8.25-7.25" clip-rule="evenodd"></path></svg>
+        <span>MY</span>
+    </a>
+
+    <a href="https://team-nexusway.github.io/jungang/page/content" class="menu_item">
+        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="none" viewBox="0 0 25 25"><g fill="#ADB5BD" fill-rule="evenodd" clip-path="url(#clip0_1636_2717)" clip-rule="evenodd"><path d="M3.625 5.5a2.75 2.75 0 0 1 2.75-2.75h12a2.75 2.75 0 0 1 2.75 2.75v6.55a.75.75 0 0 1-1.5 0V5.5c0-.69-.56-1.25-1.25-1.25h-12c-.69 0-1.25.56-1.25 1.25v14c0 .69.56 1.25 1.25 1.25h7.5a.75.75 0 0 1 0 1.5h-7.5a2.75 2.75 0 0 1-2.75-2.75z"></path><path d="M7.625 7.5a.75.75 0 0 1 .75-.75h8a.75.75 0 0 1 0 1.5h-8a.75.75 0 0 1-.75-.75M20.345 19.669a.75.75 0 0 1 1.06 0l2.5 2.5a.75.75 0 1 1-1.06 1.06l-2.5-2.5a.75.75 0 0 1 0-1.06"></path><path d="M17.875 20.2a3 3 0 1 0 0-6 3 3 0 0 0 0 6m0 1.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9"></path></g><defs><clipPath id="clip0_1636_2717"><path fill="#fff" d="M.375.5h24v24h-24z"></path></clipPath></defs></svg>
+        <span>콘텐츠</span>
+    </a>
+</div>
+
+
+<!-- 계정 설정 팝업 -->
+<div id="accountPopup" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+    <div class="bg-[#18181c] rounded-2xl shadow-xl p-6 w-[90%] max-w-md text-center space-y-5 relative border border-[#2e2e32]">
+      <!-- 닫기 버튼 -->
+      <button onclick="closeAccountPopup()" class="absolute top-3 right-3 text-gray-400 hover:text-white text-xl">
+        &times;
+      </button>
+  
+      <!-- 헤더 -->
+      <h2 class="text-2xl font-bold text-white">계정 설정</h2>
+  
+      <!-- 프로필 정보 -->
+      <div class="flex flex-col items-center gap-2">
+        <img id="popupImage" src="" alt="프로필 이미지"
+             class="w-20 h-20 rounded-full object-cover border-2 border-gray-600 shadow-sm" />
+        <p class="text-gray-300"><strong>이름:</strong> <span id="popupName" class="font-medium"></span></p>
+        <p class="text-gray-300"><strong>학번:</strong> <span id="popupID" class="font-medium"></span></p>
+        <p class="text-gray-300"><strong>기숙사:</strong> <span id="popupDormitory" class="font-medium"></span></p>
+      </div>
+  
+      <!-- 경고 정보 -->
+      <div id="warningSection" class="bg-[#2b2c30] border-l-4 border-red-500 p-4 shadow-md rounded-xl text-left space-y-3 w-full">
+        <div class="flex items-center gap-2">
+          <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" stroke-width="2"
+               viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M12 9v2m0 4h.01M12 5a7 7 0 00-7 7v1a7 7 0 007 7h1a7 7 0 007-7v-1a7 7 0 00-7-7z" />
+          </svg>
+          <p class="text-red-300 font-semibold">누적 경고: <span id="warningCount">0</span>회</p>
+        </div>
+        
+        <div>
+          <p class="text-sm text-gray-200 font-medium"><span class="tossface">🚨</span> 최근 경고 내역</p>
+          <ul id="recentWarnings" class="list-disc pl-5 text-sm text-gray-400 mt-1 space-y-1">
+            <li>경고 내역 없음</li>
+          </ul>
+        </div>
+      </div>
+  
+      
+      <div class="pt-4 flex justify-center gap-3">
+        <button onclick="logout()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg shadow transition">
+          로그아웃
+        </button>
+      </div>
+    </div>
+  </div>
+
+ 
+<!-- 푸터 -->
+<footer id="footer" class="bg-[#18181c] py-8 px-4 md:px-12 text-[#D9D9D9] text-sm rounded-lg">
+    <div class="max-w-screen-md mx-auto">
+        <!-- 회사 정보 -->
+        <div class="text-[#A0A0A0] leading-relaxed mb-6">
+            <p class="font-semibold text-[#D9D9D9]">팀 넥서스웨이</p>
+            <p>대표: 김태준</p>
+            <p>주소: 전북특별자치도 군산시 성산면 군장대길 13</p>
+            <p class="mt-2">Copyright © 2025. Team NexusWay. All Rights Reserved.</p>
+        </div>
+
+        <!-- 개인정보 보호 -->
+        <div class="mb-6">
+            <p class="font-semibold text-[#D9D9D9] flex items-center">
+                <a href="https://team-nexusway.notion.site/1c54e0b44e5f801d827ecd375356fe87#1c54e0b44e5f804394bfde69324a9b2b" class="text-[#D9D9D9] hover:text-blue-500">개인정보 보호중</a> <i class="fas fa-check-circle text-blue-500 ml-1"></i>
+            </p>
+            <p class="text-[#A0A0A0]">넥서스웨이는 고객님의 개인정보 보호를 위해 최선의 노력을 다하고 있습니다.</p>
+        </div>
+
+        <!-- 약관 -->
+        <div class="flex space-x-6 text-[#A0A0A0]">
+            <a href="https://team-nexusway.notion.site/1c54e0b44e5f8067b7adefd8cd26f647" class="hover:text-white transition">서비스 이용 약관</a>
+            <a href="https://team-nexusway.notion.site/1c54e0b44e5f801d827ecd375356fe87#1c54e0b44e5f804394bfde69324a9b2b" class="hover:text-white transition">개인정보 처리방침</a>
+            <a href="https://team-nexusway.notion.site/1c54e0b44e5f8063a008d4823fd7d425" class="hover:text-white transition">제안하기</a>
+        </div>
+    </div>
+</footer>
+
+
+
+
+        <!-- 열람실 JS -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const reasonPopup = document.getElementById("reason-popup");
+        const closeReasonPopupBtn = document.getElementById("close-reason-popup");
+        const readingRoomBtn = document.getElementById("reading-room-btn");
+        const submitReasonBtn = document.getElementById("submit-reason");
+        const reasonText = document.getElementById("reason-text");
+        const reasonCategory = document.getElementById("reason-category");
+        const customAlert = document.getElementById("custom-alert");
+        const customAlertMessage = document.getElementById("custom-alert-message");
+    
+        function showAlert(message) {
+            customAlertMessage.textContent = message;
+            customAlert.classList.remove("hidden");
+            setTimeout(() => {
+                customAlert.classList.add("hidden");
+            }, 3000);
+        }
+
+        function getTeacherByDay() {
+            const days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
+            const teachers = {
+                "일요일": "채철",
+                "월요일": "김종삼",
+                "화요일": "서영진",
+                "수요일": "채철",
+                "목요일": "김종삼",
+                "금요일": "서영진",
+                "토요일": "없음"
+            };
+            let today = new Date();
+            return teachers[days[today.getDay()]];
+        }
+
+        function getRoleMention(teacher) {
+            const roleMentions = {
+                "채철": "<@&1350654320739221545>",
+                "김종삼": "<@&1350654434647998494>",
+                "서영진": "<@&1350654515929415680>"
+            };
+            return roleMentions[teacher] || "";
+        }
+    
+        readingRoomBtn.addEventListener("click", function (event) {
+            event.preventDefault();
+            reasonPopup.classList.remove("hidden");
+        });
+    
+        closeReasonPopupBtn.addEventListener("click", function () {
+            reasonPopup.classList.add("hidden");
+        });
+    
+        reasonCategory.addEventListener("change", function () {
+            if (reasonCategory.value === "기타") {
+                reasonText.classList.remove("hidden");
+            } else {
+                reasonText.classList.add("hidden");
+            }
+        });
+    
+        submitReasonBtn.addEventListener("click", async function () {
+            const today = new Date().getDay(); // 0: 일요일, 6: 토요일
+    
+            if (today === 6) { // 토요일 체크
+                showAlert("오늘은 제출할 수 없어요.");
+                return;
+            }
+    
+            const category = reasonCategory.value;
+            const reason = reasonText.value.trim();
+    
+            if (!category) {
+                showAlert("이동 사유를 선택해주세요.");
+                return;
+            }
+    
+            if (category === "기타" && !reason) {
+                showAlert("기타 사유를 입력해주세요.");
+                return;
+            }
+    
+            // ✅ 로그인된 사용자 정보 가져오기
+            const userName = localStorage.getItem("loggedInUser") || "알 수 없음";
+            const studentID = localStorage.getItem("studentID") || "미입력";
+            const profileImage = localStorage.getItem("profileImage") || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+    
+            // 오늘의 교사와 해당 교사의 역할 멘션 가져오기
+            const teacher = getTeacherByDay();
+            const teacherMention = getRoleMention(teacher);
+    
+            const webhookUrl = "https://discord.com/api/webhooks/1355747063534452796/gcpSBvWj0amRnG8QcYWaBZCjesewH5NH4XpKfylZi9raz7hjQIvLI-y1cCnHiSkHL7L5";
+            const payload = {
+                embeds: [{
+                    title: "📌 열람실 이동 사유",
+                    color: 3447003,
+                    fields: [
+                        { name: "👤 이름", value: userName, inline: true },
+                        { name: "📌 학번", value: studentID, inline: true },
+                        { name: "📌 카테고리", value: category, inline: true },
+                        { name: "📜 사유", value: category === "기타" ? reason : "(내용 없음)", inline: false },
+                        { name: "🧑‍🏫 담당 교사", value: teacher, inline: true },
+                        { name: "🎯 알림발송", value: teacherMention, inline: true }
+                    ],
+                    thumbnail: { url: profileImage }, // 프로필 이미지 추가
+                    timestamp: new Date().toISOString()
+                }]
+            };
+    
+            try {
+                await fetch(webhookUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+    
+                showAlert("이동 사유가 제출되었습니다.");
+                reasonPopup.classList.add("hidden");
+                reasonCategory.value = "";
+                reasonText.value = "";
+                reasonText.classList.add("hidden");
+            } catch (error) {
+                console.error("전송 오류:", error);
+                showAlert("전송 과정에서 문제가 발생했어요.");
+            }
+        });
+    });
+</script>
+
+
+<!-- 모바일 여부확인 JS -->
+<script>
+    // 화면의 너비가 1024px 이상이면 PC로 간주하고 리다이렉트
+    if (window.innerWidth >= 1024) {
+      window.location.href = "https://team-nexusway.github.io/jungang/pc.html";
+    }
+  </script>
+
+<!-- 로그인 JS -->
 <script>
 (function() {
     try {
@@ -49,7 +584,6 @@
         if (!loggedInUser) {
             window.location.replace("https://team-nexusway.github.io/jungang/login");
         } else {
-            // ✅ sessionStorage에도 로그인 정보 복구 (새로고침해도 유지)
             sessionStorage.setItem("loggedInUser", loggedInUser);
 
             document.getElementById("welcomeUser").innerText = `${loggedInUser}님`;
@@ -64,7 +598,7 @@
 
 
 
-
+<!-- 급식정보및 상단메뉴 정보 JS -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const mealPopup = document.getElementById("meal-popup");
@@ -185,7 +719,7 @@
 </script>
 
 
-
+<!-- 고장 JS -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const reportPopup = document.getElementById("report-popup");
@@ -302,6 +836,7 @@
     });
     </script>
 
+<!-- 팝업 JS -->
 <script>
     document.getElementById('closePopup').addEventListener('click', function() {
         document.getElementById('popup').classList.add('hidden');
@@ -314,6 +849,7 @@
     }
 </script>
 
+<!-- 출입관리 JS -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const popup = document.getElementById("popup");
@@ -470,253 +1006,8 @@
         }
     });
     </script>
-    
 
-<!-- 이동 사유 입력 팝업 -->
-<div id="reason-popup" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden z-50">
-    <div class="bg-[#1e1e22] p-5 rounded-2xl w-[340px] shadow-lg relative" id="reason-popup-content">
-        <button id="close-reason-popup" class="absolute top-5 right-6 text-[#bfbfbf] hover:text-white transition">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
-
-        <h2 class="text-xl font-bold mb-4 text-[#D9D9D9] flex items-center">
-            <i class="fas fa-door-open mr-2"></i> 열람실 이동 사유
-        </h2>
-
-        <!-- 카테고리 선택 -->
-        <select id="reason-category" class="w-full p-2 bg-[#29292e] text-[#D9D9D9] rounded-md mb-3">
-            <option value="">카테고리를 선택하세요</option>
-            <option value="휴식">휴식</option>
-            <option value="기타">기타</option>
-        </select>
-
-        <!-- 기타 선택 시 내용 입력 -->
-        <textarea id="reason-text" class="w-full p-2 bg-[#29292e] text-[#D9D9D9] rounded-md hidden" rows="4" placeholder="이동 사유를 입력하세요"></textarea>
-
-        <button id="submit-reason" class="mt-3 bg-[#363740] text-white px-4 py-2 rounded-lg w-full hover:bg-[#2f3033] transition">
-            제출하기
-        </button>
-    </div>
-</div>
-
-<!-- 알림 메시지 -->
-<div id="custom-alert" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-[#29292e] text-white py-2 px-4 rounded-lg shadow-lg hidden flex items-center whitespace-nowrap overflow-hidden text-ellipsis">
-    <i class="fa-regular fa-circle-check mr-2"></i>
-    <span id="custom-alert-message">이동 사유를 사감선생님께 전달했어요!</span>
-</div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const reasonPopup = document.getElementById("reason-popup");
-        const closeReasonPopupBtn = document.getElementById("close-reason-popup");
-        const readingRoomBtn = document.getElementById("reading-room-btn");
-        const submitReasonBtn = document.getElementById("submit-reason");
-        const reasonText = document.getElementById("reason-text");
-        const reasonCategory = document.getElementById("reason-category");
-        const customAlert = document.getElementById("custom-alert");
-        const customAlertMessage = document.getElementById("custom-alert-message");
-    
-        function showAlert(message) {
-            customAlertMessage.textContent = message;
-            customAlert.classList.remove("hidden");
-            setTimeout(() => {
-                customAlert.classList.add("hidden");
-            }, 3000);
-        }
-
-        function getTeacherByDay() {
-            const days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
-            const teachers = {
-                "일요일": "채철",
-                "월요일": "김종삼",
-                "화요일": "서영진",
-                "수요일": "채철",
-                "목요일": "김종삼",
-                "금요일": "서영진",
-                "토요일": "없음"
-            };
-            let today = new Date();
-            return teachers[days[today.getDay()]];
-        }
-
-        function getRoleMention(teacher) {
-            const roleMentions = {
-                "채철": "<@&1350654320739221545>",
-                "김종삼": "<@&1350654434647998494>",
-                "서영진": "<@&1350654515929415680>"
-            };
-            return roleMentions[teacher] || "";
-        }
-    
-        readingRoomBtn.addEventListener("click", function (event) {
-            event.preventDefault();
-            reasonPopup.classList.remove("hidden");
-        });
-    
-        closeReasonPopupBtn.addEventListener("click", function () {
-            reasonPopup.classList.add("hidden");
-        });
-    
-        reasonCategory.addEventListener("change", function () {
-            if (reasonCategory.value === "기타") {
-                reasonText.classList.remove("hidden");
-            } else {
-                reasonText.classList.add("hidden");
-            }
-        });
-    
-        submitReasonBtn.addEventListener("click", async function () {
-            const today = new Date().getDay(); // 0: 일요일, 6: 토요일
-    
-            if (today === 6) { // 토요일 체크
-                showAlert("오늘은 제출할 수 없어요.");
-                return;
-            }
-    
-            const category = reasonCategory.value;
-            const reason = reasonText.value.trim();
-    
-            if (!category) {
-                showAlert("이동 사유를 선택해주세요.");
-                return;
-            }
-    
-            if (category === "기타" && !reason) {
-                showAlert("기타 사유를 입력해주세요.");
-                return;
-            }
-    
-            // ✅ 로그인된 사용자 정보 가져오기
-            const userName = localStorage.getItem("loggedInUser") || "알 수 없음";
-            const studentID = localStorage.getItem("studentID") || "미입력";
-            const profileImage = localStorage.getItem("profileImage") || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-    
-            // 오늘의 교사와 해당 교사의 역할 멘션 가져오기
-            const teacher = getTeacherByDay();
-            const teacherMention = getRoleMention(teacher);
-    
-            const webhookUrl = "https://discord.com/api/webhooks/1355747063534452796/gcpSBvWj0amRnG8QcYWaBZCjesewH5NH4XpKfylZi9raz7hjQIvLI-y1cCnHiSkHL7L5";
-            const payload = {
-                embeds: [{
-                    title: "📌 열람실 이동 사유",
-                    color: 3447003,
-                    fields: [
-                        { name: "👤 이름", value: userName, inline: true },
-                        { name: "📌 학번", value: studentID, inline: true },
-                        { name: "📌 카테고리", value: category, inline: true },
-                        { name: "📜 사유", value: category === "기타" ? reason : "(내용 없음)", inline: false },
-                        { name: "🧑‍🏫 담당 교사", value: teacher, inline: true },
-                        { name: "🎯 알림발송", value: teacherMention, inline: true }
-                    ],
-                    thumbnail: { url: profileImage }, // 프로필 이미지 추가
-                    timestamp: new Date().toISOString()
-                }]
-            };
-    
-            try {
-                await fetch(webhookUrl, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
-    
-                showAlert("이동 사유가 제출되었습니다.");
-                reasonPopup.classList.add("hidden");
-                reasonCategory.value = "";
-                reasonText.value = "";
-                reasonText.classList.add("hidden");
-            } catch (error) {
-                console.error("전송 오류:", error);
-                showAlert("전송 과정에서 문제가 발생했어요.");
-            }
-        });
-    });
-</script>
-
-
-
-<script>
-    // 화면의 너비가 1024px 이상이면 PC로 간주하고 리다이렉트
-    if (window.innerWidth >= 1024) {
-      window.location.href = "https://team-nexusway.github.io/jungang/pc.html";
-    }
-  </script>
-
-</body>
-</head>
-
-
-<body>
-
-<!-- 상단헤더 -->
-<a href="https://team-nexusway.notion.site/1c54e0b44e5f8056a424c0f6b5a827c3" class="bg-gradient-to-r from-[#1a1a1a] via-[#18181c] to-[#2e2e2e] p-4 rounded-lg mb-4 mt-4 block">
-    <div class="flex items-center justify-between">
-        <i class="fas fa-gift text-white ml-2"></i>
-        <span class="header-text text-white">신규 이용자라면? 확인해보세요!</span>
-        <i class="fas fa-arrow-right text-white mr-2"></i>
-    </div>
-</a>
-
-
-<!-- 탐색하기 -->
-<div class="bg-[#18181c] p-4 rounded-lg mb-4">
-    <h2 class="text-lg font-semibold mb-3 flex items-center text-[#D9D9D9]">
-        <i class="fas fa-compass mr-2"></i>
-        탐색하기
-    </h2>
-    <div class="grid-container">
-        <a href="#" class="grid-item" id="report-btn" data-key="report">
-            <span class="bottom-text">고장신고 · <span class="last-click" id="last-click-report">-</span></span>
-        </a>
-        <a href="#" class="grid-item large" id="reading-room-btn" data-key="reading-room">
-            <span class="bottom-text">열람실 · <span class="last-click" id="last-click-reading-room">-</span></span>
-        </a>
-        <a href="#" class="grid-item" id="meal-info-btn" data-key="meal-info">
-            <span class="bottom-text">식단정보 · <span class="last-click" id="last-click-meal-info">-</span></span>
-        </a>        
-    </div>
-</div>
-
-
-
-<!-- 모바일 학생증 -->
-<div class="bg-[#18181c] p-4 rounded-lg mb-4">
-    <h2 class="text-lg font-semibold mb-3 flex items-center text-[#D9D9D9]">
-        <i class="fas fa-id-card mr-2"></i> 모바일 학생증
-    </h2>
-    
-    <!-- 학생증 카드 (앞면/뒷면) -->
-    <div class="relative w-80 h-48 perspective-1000 mx-auto" onclick="flipCard()">
-        <div id="studentCard" class="w-full h-full transition-transform duration-500 ease-in-out transform-style-preserve-3d">
-            
-            <!-- 앞면 -->
-            <div class="absolute w-full h-full bg-[#1e1e22] rounded-xl shadow-lg flex items-center px-5 py-3 backface-hidden border border-[#33323A]">
-                <img id="schoolLogo" src="https://team-nexusway.github.io/jungang/assets/image/jungang-main_logo.png" 
-                     alt="학교 로고" class="w-14 h-14 rounded-full border-2 border-[#33323A] shadow-md">
-                <div class="ml-4 text-left text-[#D9D9D9]">
-                    <p id="studentName" class="text-lg font-semibold">이름</p>
-                    <p id="studentID" class="text-sm text-[#A0A0A0]">학번: </p>
-                    <p class="text-xs mt-1 text-[#7C7C7C]">중앙고등학교</p>
-                </div>
-                <div class="ml-auto">
-                    <img id="studentPhoto" src="https://ifh.cc/g/7qFrDt.png" 
-                         alt="학생 사진" class="w-16 h-16 rounded-lg border-2 border-[#33323A] shadow-md">
-                </div>
-            </div>
-
-            <!-- 뒷면 -->
-            <div class="absolute w-full h-full bg-[#1e1e22] rounded-xl shadow-lg flex flex-col items-center justify-center rotate-y-180 backface-hidden border border-[#33323A]">
-                <p class="text-[#D9D9D9] text-sm font-semibold">발급 기관: 중앙고등학교</p>
-                <p class="text-[#A0A0A0] text-xs">유효기간: 2025년 12월 31일</p>
-                <div class="bg-[#18181c] p-2 rounded-lg mt-3 border border-[#33323A]">
-                    <img id="qrCode" src="" alt="QR 코드" class="w-20 h-20">
-                </div>
-                <p class="text-[#7C7C7C] text-xs mt-2">이 학생증은 본인 확인용입니다.</p>
-            </div>
-        </div>
-    </div>
-</div>
-
+<!-- 학생증 JS -->
 <script>
     let flipped = false;
     function flipCard() {
@@ -747,264 +1038,22 @@
     }
 </script>
 
-
-
-<style>
-    .perspective-1000 {
-        perspective: 1000px;
-    }
-    .transform-style-preserve-3d {
-        transform-style: preserve-3d;
-    }
-    .backface-hidden {
-        backface-visibility: hidden;
-    }
-    .rotate-y-180 {
-        transform: rotateY(180deg);
-    }
-</style>
-
-<!-- 식단 팝업 -->
-<div id="meal-popup" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden">
-    <div class="bg-[#1e1e22] p-5 rounded-2xl w-[340px] shadow-lg relative" id="meal-popup-content">
-        <!-- 닫기(X) 버튼 -->
-        <button id="close-meal-popup" class="absolute top-5 right-6 text-[#bfbfbf] hover:text-white transition">
-           <i class="fa-solid fa-xmark"></i>
-        </button>
-
-        <h2 class="text-xl font-bold mb-4 text-[#D9D9D9] flex items-center">
-            <i class="fas fa-utensils mr-2"></i> 오늘의 식단
-        </h2>
-        <div id="meal-content" class="text-[#BFBFBF] space-y-3">
-            <div class="meal-section">
-                <h3 class="meal-title"><i class="fas fa-sun"></i> 조식</h3>
-                <p id="breakfast" class="meal-text">불러오는 중...</p>
-            </div>
-            <div class="meal-section">
-                <h3 class="meal-title"><i class="fas fa-cloud-sun"></i> 중식</h3>
-                <p id="lunch" class="meal-text">불러오는 중...</p>
-            </div>
-            <div class="meal-section">
-                <h3 class="meal-title"><i class="fas fa-moon"></i> 석식</h3>
-                <p id="dinner" class="meal-text">불러오는 중...</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-<!-- 고장 신고 팝업 -->
-<div id="report-popup" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden">
-    <div class="bg-[#1e1e22] p-5 rounded-2xl w-[340px] shadow-lg relative" id="report-popup-content">
-        <button id="close-report-popup" class="absolute top-5 right-6 text-[#bfbfbf] hover:text-white transition">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
-
-        <h2 class="text-xl font-bold mb-4 text-[#D9D9D9] flex items-center">
-            <i class="fas fa-exclamation-triangle mr-2"></i> 고장 신고
-        </h2>
-        
-        <!-- 카테고리 선택 -->
-        <select id="report-category" class="w-full p-2 bg-[#29292e] text-[#D9D9D9] rounded-md mb-3">
-            <option value="">카테고리를 선택하세요</option>
-            <option value="화장실">화장실</option>
-            <option value="전기">전기</option>
-            <option value="에어컨/난방">에어컨/난방</option>
-            <option value="기타">기타</option>
-        </select>
-
-        <!-- 호실 입력 -->
-        <input id="report-room" type="text" class="w-full p-2 bg-[#29292e] text-[#D9D9D9] rounded-md mb-3 hidden" placeholder="호실을 입력하세요 (예: 212호)">
-
-        <!-- 기타 선택 시 내용 입력 -->
-        <textarea id="report-text" class="w-full p-2 bg-[#29292e] text-[#D9D9D9] rounded-md hidden" rows="4" placeholder="고장 내용을 입력하세요"></textarea>
-
-        <button id="submit-report" class="mt-3 bg-[#363740] text-white px-4 py-2 rounded-lg w-full hover:bg-[#2f3033] transition">신고하기</button>
-    </div>
-</div>
-
-<!-- 자체 팝업 메시지 -->
-<div id="custom-alert" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-[#29292e] text-white py-2 px-4 rounded-lg shadow-lg hidden flex items-center whitespace-nowrap overflow-hidden text-ellipsis">
-    <i class="fa-regular fa-circle-check mr-2"></i>
-    <span id="custom-alert-message">신고가 접수되었습니다.</span>
-</div>
-
-
-
-
-<!-- 공지사항 -->
-<div class="bg-[#18181c] p-4 rounded-lg mb-4">
-    <h2 class="text-lg font-semibold mb-4 flex items-center text-[#D9D9D9]">
-        <i class="fas fa-newspaper mr-2"></i> 공지사항
-    </h2>
-    <ul id="notice-list" class="space-y-2">
-        <li class="bg-[#1e1e22] p-3 rounded-lg flex justify-between items-center hover:bg-[#33323A] transition-all">
-            <a href="#" class="flex justify-between w-full items-center">
-                <span class="text-[#d4d4d8] text-sm font-medium">[공지사항] 군산중앙고등학교</span>
-                <span class="text-[#A0A0A0] text-xs">2025.03.04</span>
-            </a>
-        </li>
-        <li class="bg-[#1e1e22] p-3 rounded-lg flex justify-between items-center hover:bg-[#33323A] transition-all">
-            <a href="#" class="flex justify-between w-full items-center">
-                <span class="text-[#d4d4d8] text-sm font-medium">[공지사항] 신입생 안내사항</span>
-                <span class="text-[#A0A0A0] text-xs">2025.03.04</span>
-            </a>
-        </li>
-        <li class="bg-[#1e1e22] p-3 rounded-lg flex justify-between items-center hover:bg-[#33323A] transition-all">
-            <a href="#" class="flex justify-between w-full items-center">
-                <span class="text-[#d4d4d8] text-sm font-medium">[공지사항] 신입생 주의사항</span>
-                <span class="text-[#A0A0A0] text-xs">2025.03.04</span>
-            </a>
-        </li>
-    </ul>
-</div>
-
-<!-- 자체 팝업 메시지 -->
-<div id="custom-alert" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-[#29292e] text-white py-2 px-4 rounded-lg shadow-lg hidden flex items-center whitespace-nowrap overflow-hidden text-ellipsis">
-    <i class="fa-regular fa-circle-check mr-2"></i>
-    <span id="custom-alert-message">신청이 성공적으로 접수되었습니다.</span>
-</div>
-
-<!-- 출입관리 -->
-<div class="bg-[#18181c] p-4 rounded-lg mb-4">
-    <h2 class="text-lg font-semibold mb-3 flex items-center text-[#D9D9D9]">
-        <i class="fas fa-lock mr-2 text-gray-400"></i> 출입관리
-    </h2>
-    
-    <!-- 신청 목록 -->
-    <div class="space-y-2">
-        <div class="bg-[#1e1e22] p-3 rounded-lg flex justify-between items-center">
-            <span class="text-[#d4d4d8]">외출 신청</span>
-            <button class="bg-[#363740] hover:bg-[#4a4b50] text-[#BFBFBF] px-4 py-2 rounded-lg transition-all">
-                신청하기
-            </button>
-        </div>
-        
-        <div class="bg-[#1e1e22] p-3 rounded-lg flex justify-between items-center">
-            <span class="text-[#d4d4d8]">외박 신청</span>
-            <button class="bg-[#363740] hover:bg-[#4a4b50] text-[#BFBFBF] px-4 py-2 rounded-lg transition-all">
-                신청하기
-            </button>
-        </div>
-        
-        <div class="bg-[#1e1e22] p-3 rounded-lg flex justify-between items-center">
-            <span class="text-[#d4d4d8]">조기퇴소 신청</span>
-            <button class="bg-[#363740] hover:bg-[#4a4b50] text-[#BFBFBF] px-4 py-2 rounded-lg transition-all">
-                신청하기
-            </button>
-        </div>
-    </div>
-</div>
-
-<!-- 출입 신청 팝업 -->
-<div id="popup" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden" onclick="closePopup(event)">
-    <div class="bg-[#1e1e22] p-6 rounded-lg w-80 relative" onclick="event.stopPropagation();">
-        <!-- 닫기(X) 버튼 -->
-        <button id="closePopup" class="absolute top-6 right-3 text-[#bfbfbf] hover:text-white transition">
-           <i class="fa-solid fa-xmark"></i>
-        </button>
-        <h2 id="popupTitle" class="text-lg font-semibold mb-4 text-[#D9D9D9] text-center">출입 신청</h2>
-        
-        <!-- 날짜 및 제출 시간 -->
-        <div class="mb-3">
-            <label class="text-sm text-[#BFBFBF]">오늘 날짜</label>
-            <input id="date" type="text" class="w-full bg-[#2a2a2e] p-2 rounded text-[#D9D9D9]" readonly>
-        </div>
-
-        <div class="mb-3">
-            <label class="text-sm text-[#BFBFBF]">제출 시간</label>
-            <input id="time" type="text" class="w-full bg-[#2a2a2e] p-2 rounded text-[#D9D9D9]" readonly>
-        </div>
-
-        <!-- 담당 선생님 -->
-        <div class="mb-3">
-            <label class="text-sm text-[#BFBFBF]">금일 사감 선생님</label>
-            <input id="teacher" type="text" class="w-full bg-[#2a2a2e] p-2 rounded text-[#D9D9D9]" readonly>
-        </div>
-
-        <!-- 제출 사유 입력 -->
-        <div class="mb-4">
-            <label class="text-sm text-[#BFBFBF]">제출 사유</label>
-            <textarea id="reason" class="w-full bg-[#2a2a2e] p-2 rounded text-[#D9D9D9] rows="3" placeholder="사유를 작성해주세요. 예) 개인사유"></textarea>
-        </div>
-
-        <!-- 버튼 -->
-        <div class="flex justify-center">
-            <button id="submitRequest" class="bg-[#4a4b50] px-4 py-2 rounded text-white">제출하기</button>
-        </div>
-    </div>
-</div>
-
-
-
-<div class="mobile_popup">
-    <a href="https://team-nexusway.github.io/jungang/" class="menu_item">
-        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="none" viewBox="0 0 25 25"><path fill="#F0F0F0" fill-rule="evenodd" d="M22.195 10.903 13.984 3.69a2 2 0 0 0-2.676.032l-7.79 7.185a2 2 0 0 0-.643 1.47V20.5a2 2 0 0 0 2 2h6v-5a2 2 0 1 1 4 0v5h6a2 2 0 0 0 2-2v-8.094a2 2 0 0 0-.68-1.503" clip-rule="evenodd"></path></svg>
-        <span>홈</span>
-    </a>
-
-    <a href="https://team-nexusway.github.io/jungang/page/content" class="menu_item">
-        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="none" viewBox="0 0 25 25"><g fill="#ADB5BD" fill-rule="evenodd" clip-path="url(#clip0_1636_2717)" clip-rule="evenodd"><path d="M3.625 5.5a2.75 2.75 0 0 1 2.75-2.75h12a2.75 2.75 0 0 1 2.75 2.75v6.55a.75.75 0 0 1-1.5 0V5.5c0-.69-.56-1.25-1.25-1.25h-12c-.69 0-1.25.56-1.25 1.25v14c0 .69.56 1.25 1.25 1.25h7.5a.75.75 0 0 1 0 1.5h-7.5a2.75 2.75 0 0 1-2.75-2.75z"></path><path d="M7.625 7.5a.75.75 0 0 1 .75-.75h8a.75.75 0 0 1 0 1.5h-8a.75.75 0 0 1-.75-.75M20.345 19.669a.75.75 0 0 1 1.06 0l2.5 2.5a.75.75 0 1 1-1.06 1.06l-2.5-2.5a.75.75 0 0 1 0-1.06"></path><path d="M17.875 20.2a3 3 0 1 0 0-6 3 3 0 0 0 0 6m0 1.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9"></path></g><defs><clipPath id="clip0_1636_2717"><path fill="#fff" d="M.375.5h24v24h-24z"></path></clipPath></defs></svg>
-        <span>콘텐츠</span>
-    </a>
-
-    <a href="#" class="menu_item" onclick="openMyPage()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="none" viewBox="0 0 25 25"><path fill="#ADB5BD" fill-rule="evenodd" d="M12.125 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m0 1.5a5 5 0 1 0 0-10 5 5 0 0 0 0 10M12.125 15.25c-4.642 0-8.25 3.326-8.25 7.25a.75.75 0 0 1-1.5 0c0-4.913 4.45-8.75 9.75-8.75s9.75 3.837 9.75 8.75a.75.75 0 0 1-1.5 0c0-3.924-3.608-7.25-8.25-7.25" clip-rule="evenodd"></path></svg>
-        <span>MY</span>
-    </a>
-</div>
-
-
-<!-- 계정 설정 팝업 -->
-<div id="accountPopup" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
-    <div class="bg-[#18181c] rounded-2xl shadow-xl p-6 w-[90%] max-w-md text-center space-y-5 relative border border-[#2e2e32]">
-      <!-- 닫기 버튼 -->
-      <button onclick="closeAccountPopup()" class="absolute top-3 right-3 text-gray-400 hover:text-white text-xl">
-        &times;
-      </button>
-  
-      <!-- 헤더 -->
-      <h2 class="text-2xl font-bold text-white">계정 설정</h2>
-  
-      <!-- 프로필 정보 -->
-      <div class="flex flex-col items-center gap-2">
-        <img id="popupImage" src="" alt="프로필 이미지"
-             class="w-20 h-20 rounded-full object-cover border-2 border-gray-600 shadow-sm" />
-        <p class="text-gray-300"><strong>이름:</strong> <span id="popupName" class="font-medium"></span></p>
-        <p class="text-gray-300"><strong>학번:</strong> <span id="popupID" class="font-medium"></span></p>
-        <p class="text-gray-300"><strong>기숙사:</strong> <span id="popupDormitory" class="font-medium"></span></p>
-      </div>
-  
-      <!-- 경고 정보 -->
-      <div id="warningSection" class="bg-[#2b2c30] border-l-4 border-red-500 p-4 shadow-md rounded-xl text-left space-y-3 w-full">
-        <div class="flex items-center gap-2">
-          <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" stroke-width="2"
-               viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M12 9v2m0 4h.01M12 5a7 7 0 00-7 7v1a7 7 0 007 7h1a7 7 0 007-7v-1a7 7 0 00-7-7z" />
-          </svg>
-          <p class="text-red-300 font-semibold">누적 경고: <span id="warningCount">0</span>회</p>
-        </div>
-        
-        <div>
-          <p class="text-sm text-gray-200 font-medium">📌 최근 경고 내역</p>
-          <ul id="recentWarnings" class="list-disc pl-5 text-sm text-gray-400 mt-1 space-y-1">
-            <li>경고 내역 없음</li>
-          </ul>
-        </div>
-      </div>
-  
-      
-      <div class="pt-4 flex justify-center gap-3">
-        <button onclick="logout()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg shadow transition">
-          로그아웃
-        </button>
-      </div>
-    </div>
-  </div>
-
+<!-- 경고및 기타 JS -->
   <script>
+function logout() {
+  // 저장된 사용자 정보 삭제
+  localStorage.removeItem("loggedInUser");
+  localStorage.removeItem("studentID");
+  localStorage.removeItem("dormitory");
+  localStorage.removeItem("profileImage");
+
+  // 팝업 닫기
+  closeAccountPopup();
+
+  // 홈이나 로그인 페이지로 이동
+  window.location.href = "/"; // 필요에 따라 다른 경로로 변경 가능
+}
+
      function closeAccountPopup() {
     const popup = document.getElementById("accountPopup");
     if (popup) {
@@ -1087,67 +1136,6 @@ document.addEventListener("scroll", function () {
 });
 </script>
 
-<style>
-    .mobile_popup {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: #1e1e22;
-    padding: 10px;
-    border-radius: 10px 10px 0 0;
-    z-index: 9999;
-    border: 1px solid #383840;
-    top: 91%;
-    transform: translateY(100%); /* 초기 상태에서 아래로 숨김 */
-    transition: transform 0.3s ease-in-out; /* 부드러운 전환 */
-}
-
-@media screen and (max-width: 768px) {
-    .page-wrapper {
-      display: none;
-    }
-
-    .mobile_popup {
-      display: flex;
-    }
-
-    .menu_item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      color: #333;
-      cursor: pointer;
-      text-decoration: none;
-    }
-
-    .menu_item svg {
-      width: 26px;
-      height: 26px;
-      margin-bottom: 5px;
-    }
-
-    .menu_item span {
-      font-size: 12px;
-    }
-
-    .menu_item:hover {
-      opacity: 0.8;
-    }
-  }
-
-
-  .menu_item span {
-    font-size: 12px;
-    color: #f0f0f0;
-}
-</style>
-
-
 <script>
     let idleTimer;
     let isUserActive = true;
@@ -1193,35 +1181,6 @@ document.addEventListener("scroll", function () {
     });
   </script>
 
- 
-<!-- 푸터 -->
-<footer id="footer" class="bg-[#18181c] py-8 px-4 md:px-12 text-[#D9D9D9] text-sm rounded-lg">
-    <div class="max-w-screen-md mx-auto">
-        <!-- 회사 정보 -->
-        <div class="text-[#A0A0A0] leading-relaxed mb-6">
-            <p class="font-semibold text-[#D9D9D9]">팀 넥서스웨이</p>
-            <p>대표: 김태준</p>
-            <p>주소: 전북특별자치도 군산시 성산면 군장대길 13</p>
-            <p class="mt-2">© 2025. Team NexusWay.</p>
-        </div>
-
-        <!-- 개인정보 보호 -->
-        <div class="mb-6">
-            <p class="font-semibold text-[#D9D9D9] flex items-center">
-                <a href="https://team-nexusway.notion.site/1c54e0b44e5f801d827ecd375356fe87#1c54e0b44e5f804394bfde69324a9b2b" class="text-[#D9D9D9] hover:text-blue-500">개인정보 보호중</a> <i class="fas fa-check-circle text-blue-500 ml-1"></i>
-            </p>
-            <p class="text-[#A0A0A0]">넥서스웨이는 고객님의 개인정보 보호를 위해 최선의 노력을 다하고 있습니다.</p>
-        </div>
-
-        <!-- 약관 -->
-        <div class="flex space-x-6 text-[#A0A0A0]">
-            <a href="https://team-nexusway.notion.site/1c54e0b44e5f8067b7adefd8cd26f647" class="hover:text-white transition">서비스 이용 약관</a>
-            <a href="https://team-nexusway.notion.site/1c54e0b44e5f801d827ecd375356fe87#1c54e0b44e5f804394bfde69324a9b2b" class="hover:text-white transition">개인정보 처리방침</a>
-            <a href="https://team-nexusway.notion.site/1c54e0b44e5f8063a008d4823fd7d425" class="hover:text-white transition">제안하기</a>
-        </div>
-    </div>
-</footer>
-
     <script>
         // 서비스 워커 등록
         if ('serviceWorker' in navigator) {
@@ -1262,10 +1221,20 @@ document.addEventListener("scroll", function () {
     </script>
 
 
+<script>
+  console.log(`%c
+ _____                           _   _                          _    _               
+|_   _|                         | \\ | |                        | |  | |              
+  | |    ___   __ _  _ __ ___   |  \\| |  ___ __  __ _   _  ___ | |  | |  __ _  _   _ 
+  | |   / _ \\ / _\` || '_ \` _ \\  | . \` | / _ \\\\ \\/ /| | | |/ __|| |/\\| | / _\` || | | |
+  | |  |  __/| (_| || | | | | | | |\\  ||  __/ >  < | |_| |\\__ \\\\  /\\  /| (_| || |_| |
+  \\_/   \\___| \\__,_||_| |_| |_| \\_| \\_/ \\___|/_/\\_\\ \\__,_||___/ \\/  \\/  \\__,_| \\__, |
+                                                                               __/ |
+                                                                              |___/ 
+`, "color: #fabe42; font-weight: bold; font-family: monospace; font-size: 12px;");
 
-
-
-
+  console.log("%cCopyright © 2025. Team NexusWay. All Rights Reserved.", "color: #f4b534; font-weight: bold; font-size: 14px;");
+</script>
 
 </div>
 </body>

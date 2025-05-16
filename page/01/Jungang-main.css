@@ -1,13 +1,4 @@
 /* 폰트 설정 */
-
-
-@font-face {
-    font-family: 'Pretendard-Light';
-    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Light.woff') format('woff');
-    font-weight: 500;
-    font-style: normal;
-  }
-  
 @font-face {
     font-family: 'Pretendard-Regular';
     src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
@@ -27,12 +18,6 @@
     src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Bold.woff') format('woff');
     font-weight: 700;
     font-style: normal;
-}
-
-
-.header-text {
-    font-family: Pretendard-Medium;
-    font-size: 1.1rem;
 }
 
 body {
@@ -172,4 +157,72 @@ footer {
 }
 
 
+.mobile_popup {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #1e1e22;
+    padding: 10px;
+    border-radius: 10px 10px 0 0;
+    z-index: 9999;
+    border: 1px solid #383840;
+    transition: transform 0.3s ease-in-out;
+}
 
+@media screen and (max-width: 768px) {
+    .page-wrapper {
+      display: none;
+    }
+
+.mobile_popup {
+    transform: translateY(0); /* 기본은 보임 */
+}
+
+    .menu_item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      color: #333;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .menu_item svg {
+      width: 26px;
+      height: 26px;
+      margin-bottom: 5px;
+    }
+
+    .menu_item span {
+      font-size: 12px;
+    }
+
+    .menu_item:hover {
+      opacity: 0.8;
+    }
+  }
+
+
+  .menu_item span {
+    font-size: 12px;
+    color: #f0f0f0;
+}
+
+
+    .perspective-1000 {
+        perspective: 1000px;
+    }
+    .transform-style-preserve-3d {
+        transform-style: preserve-3d;
+    }
+    .backface-hidden {
+        backface-visibility: hidden;
+    }
+    .rotate-y-180 {
+        transform: rotateY(180deg);
+    }
