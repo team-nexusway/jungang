@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>학생증 인증</title>
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link href="https://cdn.jsdelivr.net/gh/toss/tossface/dist/tossface.css" rel="stylesheet" type="text/css" />
+    <style>
+        .tossface {
+          font-family: Tossface;
+          font-size: 0.9rem;
+        }
+      </style>
     <style>
         body {
             font-family: 'Pretendard', sans-serif;
@@ -43,14 +52,14 @@
     <body>
     <div class="card">
         <h2>학생증 인증</h2>
-        <p class="status" id="status">🔄 인증 정보를 불러오는 중...</p>
+        <p class="status" id="status"><span class="tossface">🔄</span> 인증 정보를 불러오는 중...</p>
         <div class="info">
-            <p><strong>학생 이름:</strong> <span id="studentName">-</span></p>
-            <p><strong>학번:</strong> <span id="studentID">-</span></p>
-            <p><strong>접속 IP:</strong> <span id="ip">-</span></p>
-            <p><strong>접속 국가:</strong> <span id="country">-</span></p>
-            <p><strong>접속 시간:</strong> <span id="time">-</span></p>
-            <p><strong>접속 기기:</strong> <span id="device">-</span></p>
+            <p><span class="tossface">👤</span> <strong>학생 이름:</strong> <span id="studentName">-</span></p>
+            <p><span class="tossface">🆔</span> <strong>학번:</strong> <span id="studentID">-</span></p>
+            <p><span class="tossface">🛡</span> <strong>접속 IP:</strong> <span id="ip">-</span></p>
+            <p><span class="tossface">🇰🇷</span> <strong>접속 국가:</strong> <span id="country">-</span></p>
+            <p><span class="tossface">📱</span> <strong>접속 시간:</strong> <span id="time">-</span></p>
+            <p><span class="tossface">🕓</span> <strong>접속 기기:</strong> <span id="device">-</span></p>
         </div>
     </div>
     
@@ -111,9 +120,10 @@
         console.log("📌 URL에서 가져온 학번:", studentID);
     
         if (!studentID) {
-            document.getElementById("status").innerText = "❌ 학번이 제공되지 않았습니다.";
-            return;
-        }
+    document.getElementById("status").innerHTML = '<span class="tossface">❌</span> 학번이 제공되지 않았습니다.';
+    return;
+}
+
     
         try {
             console.log("📌 API 요청 시작...");
@@ -124,7 +134,7 @@
             const matchedStudent = students.find(entry => String(entry.studentID).trim() === String(studentID).trim());
     
             if (!matchedStudent) {
-                document.getElementById("status").innerText = "❌ 존재하지 않는 학생증입니다.";
+                document.getElementById("status").innerHTML = '<span class="tossface">❌</span> 존재하지 않는 학생증입니다.';
                 return;
             }
     
@@ -140,7 +150,7 @@
             document.getElementById("device").innerText = device;
             document.getElementById("time").innerText = time;
     
-            document.getElementById("status").innerText = "✅ 학생증 인증 완료";
+            document.getElementById("status").innerHTML = '<span class="tossface">✅</span> 학생증 인증 완료';
     
             // 📌 웹훅 전송
             const webhookURL = "https://discord.com/api/webhooks/1355746285680070809/tkMELtrXjEe35UW7bcUuPCR-COodR9CiK3_NbXdDrh2GcXCVSf8LqYeCcX52b835fb4U";
