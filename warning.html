@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>중앙스테이 - 비정상적 접근 시도 차단 안내</title>
+   <link rel="icon" type="image/png" href="https://team-nexusway.github.io/jungang/assets/image/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="https://team-nexusway.github.io/jungang/assets/image/favicon.svg" />
+    <link rel="shortcut icon" href="https://team-nexusway.github.io/jungang/assets/image/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="https://team-nexusway.github.io/jungang/assets/image/apple-touch-icon.png" />
+  <style>
+    @font-face {
+    font-family: 'HakgyoansimBareondotumB';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2307-2@1.0/HakgyoansimBareondotumB.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+}
+
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0; padding: 0;
+      font-family: HakgyoansimBareondotumB;
+      background: linear-gradient(135deg, #0b205e 0%, #3075b9 100%);
+      color: #fff;
+      user-select: none;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .container {
+      background: #1d3c8a;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+      max-width: 800px;
+      width: 100%;
+      padding: 40px 35px;
+      text-align: center;
+      overflow-wrap: break-word;
+    }
+    h1 {
+      font-family: HakgyoansimBareondotumB;
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: #d2def4;
+      letter-spacing: 2px;
+      margin-bottom: 0.2em;
+    }
+    h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #ff7a1a;
+      letter-spacing: -0.5px;
+      margin-bottom: 1em;
+    }
+    p {
+      font-size: 1.125rem;
+      font-weight: 600;
+      background-color: rgba(0, 0, 0, 0.65);
+      padding: 18px 20px;
+      border-radius: 8px;
+      line-height: 1.6;
+      margin-bottom: 30px;
+      user-select: text;
+      box-shadow: inset 0 0 8px #00000088;
+      word-break: break-word;
+    }
+    .info {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #b0c6e8;
+      line-height: 1.6;
+      margin-bottom: 40px;
+      user-select: text;
+      word-break: break-word;
+    }
+    table {
+      width: 100%;
+      max-width: 700px;
+      margin: 0 auto 40px auto;
+      border-collapse: separate;
+      border-spacing: 0;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+      background: #223e8b;
+      user-select: text;
+      table-layout: fixed;
+      word-wrap: break-word;
+    }
+    thead tr {
+      background-color: #2f5fc0;
+      color: #e4e9ff;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: 0.5px;
+    }
+    thead tr th {
+      padding: 14px 20px;
+      text-align: center;
+    }
+    tbody tr {
+      background-color: #305db6cc;
+      transition: background-color 0.3s ease;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.2px;
+    }
+    tbody tr:nth-child(even) {
+      background-color: #3c6ad1cc;
+    }
+    tbody tr:hover {
+      background-color: #477fe9cc;
+    }
+    tbody tr td {
+      padding: 14px 20px;
+      text-align: center;
+      user-select: text;
+      overflow-wrap: break-word;
+    }
+    tbody tr td a {
+      color: #a9c9ff;
+      background-color: #0b1e58;
+      padding: 8px 16px;
+      border-radius: 6px;
+      text-decoration: none;
+      display: inline-block;
+      transition: background-color 0.25s ease;
+      word-break: break-word;
+    }
+    tbody tr td a:hover {
+      background-color: #2d4fc1;
+      color: #fff;
+      text-decoration: underline;
+    }
+    .footer {
+      font-size: 0.9rem;
+      color: #9bb1dd;
+      user-select: text;
+      margin-top: 20px;
+      line-height: 1.4;
+    }
+
+    /* 반응형 */
+    @media (max-width: 900px) {
+      h1 {
+        font-size: 2.8rem;
+      }
+      h2 {
+        font-size: 1.4rem;
+      }
+      p {
+        font-size: 1rem;
+      }
+      .info {
+        font-size: 0.9rem;
+        margin-bottom: 30px;
+      }
+      tbody tr td, thead tr th {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+      }
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 15px 10px;
+      }
+      .container {
+        padding: 25px 20px;
+      }
+      h1 {
+        font-size: 2rem;
+      }
+      h2 {
+        font-size: 1.2rem;
+      }
+      p {
+        font-size: 0.9rem;
+        padding: 14px 15px;
+      }
+      .info {
+        font-size: 0.85rem;
+        margin-bottom: 25px;
+      }
+      table {
+        display: block;
+        overflow-x: auto;
+        max-width: 100%;
+        border-radius: 8px;
+      }
+      thead tr {
+        display: table-row;
+      }
+      tbody tr {
+        display: table-row;
+      }
+      tbody tr td, thead tr th {
+        white-space: nowrap;
+      }
+      tbody tr td a {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+      }
+      .footer {
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+  <script>
+    // 마우스 오른쪽 클릭 및 개발자 도구 접근 방지 시도
+    document.addEventListener('contextmenu', event => event.preventDefault());
+
+    document.addEventListener('keydown', function(event) {
+      // F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U 차단
+      if (
+        event.key === "F12" ||
+        (event.ctrlKey && event.shiftKey && (event.key === 'I' || event.key === 'J')) ||
+        (event.ctrlKey && event.key === 'U')
+      ) {
+        alert('중앙스테이');
+        event.preventDefault();
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>Warning</h1>
+    <h2>비정상적인 접근 및 해킹 시도 차단 안내</h2>
+    <p>해당 사이트에서 비정상적인 접근 또는 해킹 시도가 감지되어<br>접속이 차단되었습니다.</p>
+    <div class="info">
+      이 조치는 사이트의 안전과 이용자 보호를 위한 것이니 양해 부탁드립니다.<br>
+      문의 사항이 있으시면 아래 연락처로 문의해 주시기 바랍니다.
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>담당 부서</th>
+          <th>전화번호</th>
+          <th>이메일</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>팀넥서스웨이</td>
+          <td>-</td>
+          <td>-</td>
+        </tr>
+        <tr>
+          <td>미정</td>
+          <td>-</td>
+          <td>-</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="footer">
+      ※ 본 페이지는 비정상적 접근 시도를 탐지하고 자동으로 차단하는 페이지입니다.<br>
+      프로그램 설치나 개인정보 요구는 절대 하지 않습니다.
+    </div>
+  </div>
+</body>
+</html>
