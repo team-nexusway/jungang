@@ -197,4 +197,70 @@ function closeCustomAlert() {
       }
     });
   </script>
+
+  <!-- 모바일 여부확인 JS -->
+<script>
+    // 화면의 너비가 1024px 이상이면 PC로 간주하고 리다이렉트
+    if (window.innerWidth >= 1024) {
+      window.location.href = "https://team-nexusway.github.io/jungang/pc";
+    }
+  </script>
+
+<script>
+// 이동시킬 URL
+const redirectURL = "https://team-nexusway.github.io/jungang/warning";
+
+// 단축키 입력 감지 → 리다이렉트
+document.addEventListener("keydown", function (e) {
+  // Ctrl 키만 눌러도 이동
+  if (e.ctrlKey && !e.altKey && !e.shiftKey && !e.metaKey) {
+    window.location.href = redirectURL;
+  }
+
+  // F12, Ctrl+Shift+I/J/C, Ctrl+U/S/H
+  if (
+    e.key === "F12" ||
+    (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J" || e.key === "C")) ||
+    (e.ctrlKey && (e.key === "U" || e.key === "S" || e.key === "H"))
+  ) {
+    e.preventDefault();
+    window.location.href = redirectURL;
+  }
+});
+
+// 마우스 우클릭 방지
+document.addEventListener("contextmenu", function (e) {
+  e.preventDefault();
+  window.location.href = redirectURL;
+});
+
+// 개발자 도구 감지 (크기 변화로 판단)
+let devtoolsOpen = false;
+setInterval(() => {
+  const threshold = 160;
+  if (
+    window.outerWidth - window.innerWidth > threshold ||
+    window.outerHeight - window.innerHeight > threshold
+  ) {
+    if (!devtoolsOpen) {
+      devtoolsOpen = true;
+      window.location.href = redirectURL;
+    }
+  } else {
+    devtoolsOpen = false;
+  }
+}, 500);
+
+// debugger 지연 탐지 방식
+(function detectDebugger(delay = 100) {
+  setInterval(() => {
+    const start = performance.now();
+    debugger;
+    const end = performance.now();
+    if (end - start > delay) {
+      window.location.href = redirectURL;
+    }
+  }, 1000);
+})();
+</script>
 </html>
