@@ -144,34 +144,6 @@ document.addEventListener("contextmenu", function (e) {
   window.location.href = redirectURL;
 });
 
-// 개발자 도구 감지 (크기 변화로 판단)
-let devtoolsOpen = false;
-setInterval(() => {
-  const threshold = 160;
-  if (
-    window.outerWidth - window.innerWidth > threshold ||
-    window.outerHeight - window.innerHeight > threshold
-  ) {
-    if (!devtoolsOpen) {
-      devtoolsOpen = true;
-      window.location.href = redirectURL;
-    }
-  } else {
-    devtoolsOpen = false;
-  }
-}, 500);
-
-// debugger 지연 탐지 방식
-(function detectDebugger(delay = 100) {
-  setInterval(() => {
-    const start = performance.now();
-    debugger;
-    const end = performance.now();
-    if (end - start > delay) {
-      window.location.href = redirectURL;
-    }
-  }, 1000);
-})();
 </script>
 
 
