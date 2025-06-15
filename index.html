@@ -239,26 +239,78 @@
         <i class="fas fa-newspaper mr-2"></i> 공지사항
     </h2>
     <ul id="notice-list" class="space-y-2">
-        <li class="bg-[#1e1e22] p-3 rounded-lg flex justify-between items-center hover:bg-[#33323A] transition-all">
-            <a href="#" class="flex justify-between w-full items-center">
-                <span class="text-[#d4d4d8] text-sm font-medium">[공지사항] 군산중앙고등학교</span>
-                <span class="text-[#A0A0A0] text-xs">2025.03.04</span>
-            </a>
-        </li>
-        <li class="bg-[#1e1e22] p-3 rounded-lg flex justify-between items-center hover:bg-[#33323A] transition-all">
-            <a href="#" class="flex justify-between w-full items-center">
-                <span class="text-[#d4d4d8] text-sm font-medium">[공지사항] 신입생 안내사항</span>
-                <span class="text-[#A0A0A0] text-xs">2025.03.04</span>
-            </a>
-        </li>
-        <li class="bg-[#1e1e22] p-3 rounded-lg flex justify-between items-center hover:bg-[#33323A] transition-all">
-            <a href="#" class="flex justify-between w-full items-center">
-                <span class="text-[#d4d4d8] text-sm font-medium">[공지사항] 신입생 주의사항</span>
-                <span class="text-[#A0A0A0] text-xs">2025.03.04</span>
-            </a>
-        </li>
+
     </ul>
 </div>
+
+<!-- Firebase CDN -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyC6N0j6ugiT_gIUh9ETJ79Ug3l7YBqHzYs",
+    authDomain: "jungang-stay.firebaseapp.com",
+    projectId: "jungang-stay",
+    storageBucket: "jungang-stay.firebasestorage.app",
+    messagingSenderId: "40133441030",
+    appId: "1:40133441030:web:cbd8890e176ec1184d7587"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  const noticeList = document.getElementById('notice-list');
+
+  function formatDate(dateStr) {
+    const d = new Date(dateStr);
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth()+1).padStart(2,'0');
+    const dd = String(d.getDate()).padStart(2,'0');
+    return `${yyyy}.${mm}.${dd}`;
+  }
+
+  function loadNotices() {
+    noticeList.innerHTML = '<li class="text-center text-sm text-[#A0A0A0]">공지사항을 불러오는 중입니다...</li>';
+
+    db.collection('notices').orderBy('date', 'desc').get()
+      .then(snapshot => {
+        if (snapshot.empty) {
+          noticeList.innerHTML = '<li class="text-center text-sm text-[#A0A0A0]">등록된 공지사항이 없습니다.</li>';
+          return;
+        }
+
+        noticeList.innerHTML = '';
+        snapshot.forEach(doc => {
+          const data = doc.data();
+
+          // a 태그 링크는 data.link (없으면 #)
+          const link = data.link || '#';
+          const title = data.title || '제목 없음';
+          const date = data.date ? formatDate(data.date) : '';
+
+          const li = document.createElement('li');
+          li.className = 'bg-[#1e1e22] p-3 rounded-lg flex justify-between items-center hover:bg-[#33323A] transition-all';
+
+          li.innerHTML = `
+            <a href="${link}" target="_blank" rel="noopener noreferrer" class="flex justify-between w-full items-center">
+              <span class="text-[#d4d4d8] text-sm font-medium">[공지사항] ${title}</span>
+              <span class="text-[#A0A0A0] text-xs">${date}</span>
+            </a>
+          `;
+          noticeList.appendChild(li);
+        });
+      })
+      .catch(err => {
+        console.error(err);
+        noticeList.innerHTML = '<li class="text-center text-sm text-red-500">공지사항을 불러오는 중 오류가 발생했습니다.</li>';
+      });
+  }
+
+  loadNotices();
+</script>
+
+
 
 <!-- 자체 팝업 메시지 -->
 <div id="custom-alert" class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-[#29292e] text-white py-2 px-4 rounded-lg shadow-lg hidden flex items-center whitespace-nowrap overflow-hidden text-ellipsis">
@@ -474,9 +526,9 @@
 
         function getRoleMention(teacher) {
             const roleMentions = {
-                "김동신": "<@&1350654320739221545>",
-                "이동걸": "<@&1350654434647998494>",
-                "양인석": "<@&1350654515929415680>"
+                "김동신": "<@&1383601523522670713>",
+                "이동걸": "<@&1383601555282067699>",
+                "양인석": "<@&1383601592309252157>"
             };
             return roleMentions[teacher] || "";
         }
@@ -911,9 +963,9 @@ document.addEventListener("contextmenu", function (e) {
     
         function getRoleMention(teacher) {
             const roleMentions = {
-                "김동신": "<@&1350654320739221545>",
-                "이동걸": "<@&1350654434647998494>",
-                "양인석": "<@&1350654515929415680>"
+                "김동신": "<@&1383601523522670713>",
+                "이동걸": "<@&1383601555282067699>",
+                "양인석": "<@&1383601592309252157>"
             };
             return roleMentions[teacher] || "";
         }
@@ -969,8 +1021,8 @@ document.addEventListener("contextmenu", function (e) {
             reasonInput.classList.remove("highlight");
     
             const requestData = {
-                username: "출입 신청 알림",
-                avatar_url: "https://ifh.cc/g/gqo9gX.jpg",
+                username: "출입 신청 알람",
+                avatar_url: "https://ifh.cc/g/hLLBWX.png",
                 content: roleMention,
                 embeds: [
                     {
@@ -1082,7 +1134,7 @@ function logout() {
   closeAccountPopup();
 
   // 홈이나 로그인 페이지로 이동
-  window.location.href = "/"; // 필요에 따라 다른 경로로 변경 가능
+  window.location.href = "https://team-nexusway.github.io/jungang/login"; // 필요에 따라 다른 경로로 변경 가능
 }
 
      function closeAccountPopup() {
