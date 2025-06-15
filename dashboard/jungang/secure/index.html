@@ -70,13 +70,13 @@
 <script>
   // 로그인 토큰 체크 및 없으면 로그인 페이지로 이동
   if (localStorage.getItem("login-token") !== "authenticated") {
-    window.location.href = "http://127.0.0.1:5500/dashboard/index.html"; // 로그인 페이지 주소에 맞게 변경하세요
+    window.location.href = "https://team-nexusway.github.io/jungang/dashboard/"; // 로그인 페이지 주소에 맞게 변경하세요
   }
 
   // 로그아웃 버튼 클릭 시 처리
   document.getElementById("logoutBtn").addEventListener("click", () => {
     localStorage.removeItem("login-token");
-    window.location.href = "http://127.0.0.1:5500/dashboard/index.html"; // 로그인 페이지 주소에 맞게 변경하세요
+    window.location.href = "https://team-nexusway.github.io/jungang/dashboard/"; // 로그인 페이지 주소에 맞게 변경하세요
   });
 
   const firebaseConfig = {
